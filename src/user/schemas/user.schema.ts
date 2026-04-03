@@ -1,0 +1,41 @@
+import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
+import { Document, Types } from "mongoose";
+import { Permission } from "../../roles/schemas/permission.schema";
+import { Role } from "../../roles/schemas/role.schema";
+import { Doctor } from "../../doctor/schemas/doctor.schema";
+
+
+@Schema({timestamps:true})
+export class User extends Document{
+    @Prop()
+    name?:string;
+
+    @Prop({unique:true})
+    email?:string;
+
+    @Prop()
+    password?:string;
+
+    @Prop({default:true})
+    isVerified?:boolean;
+
+   @Prop({default:false})
+   isActive?:boolean;
+
+    @Prop({ type: [{ type: Types.ObjectId, ref: 'Permission' }] })
+    permissions?: Permission[]; 
+
+    @Prop({ type: Types.ObjectId, ref: 'Role' })
+    roles?: Role;
+
+    @Prop({ type: Types.ObjectId, ref: 'Doctor' })
+    doctors?: Doctor;
+
+    @Prop({ type: Types.ObjectId, ref: 'Patient' })
+    patients?: Doctor;
+
+    
+
+}
+
+export const UserSchema = SchemaFactory.createForClass(User);

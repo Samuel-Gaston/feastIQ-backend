@@ -1,0 +1,97 @@
+import { Body, Post,Get, Param, Patch, Delete, Controller} from "@nestjs/common";
+import { DoctorService } from "../services/doctor.service";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { CreateDoctorDto } from "../dtos/create-doctor.dto";
+import { I18n, I18nContext } from "nestjs-i18n";
+import { Roles } from "../../common/decorators/role.decorator";
+import { RoleEnum } from "../../common/enums/role.enum";
+import { Permissions } from "../../common/decorators/permission.decorator";
+import { PermissionCode } from "../../common/enums/permission.enum";
+import { UpdateDoctorDto } from "../dtos/update-doctor.dto";
+
+
+@ApiTags('Doctors')
+@ApiResponse({status:404, description:'NOT FOUND'})
+@ApiResponse({ status: 400, description: "BAD_REQUEST" })
+@ApiResponse({ status: 401, description: "UNAUTHORIZED" })
+@ApiResponse({ status: 403, description: "FORBIDDEN" })
+@ApiResponse({ status: 404, description: "ROLE_NOT_FOUND" })
+@ApiResponse({ status: 422, description: "VALIDATION_FAILED" })
+@ApiResponse({ status: 500, description: "SERVER_ERROR" })
+@Controller('doctors')
+export class DoctorController{
+   constructor(
+    private readonly doctorservice: DoctorService
+   ){}
+
+   @Post()
+   @Roles(RoleEnum.ADMIN)
+   @Permissions(PermissionCode.PERMISSION_CREATE)
+   @ApiOperation({summary:"create a doctor"})
+   @ApiResponse({status:200, description:"doctor created successfully"})
+   async create(
+    @Body() dto:CreateDoctorDto,
+    @I18n() i18n:I18nContext
+   ){
+    const response = await this.doctorservice.createDoctor(dto)
+    const message = i18n.t("common.DOCTOR_CREATED")
+    return {data:response, message}
+   }
+
+   @Get()
+   @Roles(RoleEnum.ADMIN)
+   @Permissions(PermissionCode.PERMISSION_READ)
+   @ApiOperation({summary:"fetch all doctors"})
+   @ApiResponse({status:200, description:"doctors fetched successfully"})
+   async getAll(
+    @I18n() i18n:I18nContext
+   ){
+    const response = await this.doctorservice.getAllDoctors()
+    const message = i18n.t("common.DOCTOR_READ")
+    return {data:response, message}
+   }
+
+   @Get(':id')
+   @Roles(RoleEnum.ADMIN)
+   @Permissions(PermissionCode.PERMISSION_READ)
+   @ApiOperation({summary:"fetch one doctor by Id"})
+   @ApiResponse({status:200, description:"doctor fetched successfully"})
+   async getByID(
+    @Param('id') id:string,
+    @I18n() i18n:I18nContext
+   ){
+    const response = await this.doctorservice.getDoctorById(id)
+    const message = i18n.t("common.DOCTOR_READ_ONE")
+    return {data:response, message}
+   }
+
+  @Patch(':id')
+   @Roles(RoleEnum.ADMIN)
+   @Permissions(PermissionCode.PERMISSION_READ)
+   @ApiOperation({summary:"updated a doctor"})
+   @ApiResponse({status:200, description:"doctor updated successfully"})
+   async update(
+    @Param('id') id:string,
+    @I18n() i18n:I18nContext,
+    @Body() dto:UpdateDoctorDto
+   ){
+    const response = await this.doctorservice.updatedDoctor(id, dto)
+    const message = i18n.t("common.DOCTOR_UPDATE")
+    return {data:response, message}
+   }
+
+   @Delete(':id')
+   @Roles(RoleEnum.ADMIN)
+   @Permissions(PermissionCode.PERMISSION_READ)
+   @ApiOperation({summary:"delete a doctor"})
+   @ApiResponse({status:200, description:"doctor deleted successfully"})
+   async delete(
+    @Param('id') id:string,
+    @I18n() i18n:I18nContext,
+   ){
+    const response = await this.doctorservice.deleteDoctor(id)
+    const message = i18n.t("common.DOCTOR_DELETED")
+    return {data:response, message}
+   }
+
+}

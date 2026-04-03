@@ -1,0 +1,38 @@
+{
+  "ROLE_CREATED": "Rôle créé avec succès",
+  "ROLE_FETCHED": "Rôle récupéré avec succès",
+  "ROLEPERMISSION_FETCHED": "Autorisations récupérées avec succès",
+  "UPDATED_ROLE": "Rôle mis à jour avec succès",
+  "DELETED_ROLE": "Rôle supprimé avec succès",
+  "ROLE_ALREADY_EXISTS": "Un rôle avec ce nom existe déjà",
+  "ROLE_NOT_FOUND": "Rôle non trouvé",
+  "PERMISSIONS_NOT_FOUND": "Certaines autorisations sont introuvables",
+  "SERVER_ERROR": "Une erreur inattendue s'est produite",
+
+  "PERMISSION_CREATED": "Permission créée avec succès",
+  "PERMISSION_READ": "Permissions récupérées avec succès",
+  "PERMISSION_ASSIGNED_TO_USER": "Permissions attribuées à l'utilisateur avec succès",
+  "PERMISSION_ASSIGNED_TO_ROLE": "Permissions attribuées au rôle avec succès",
+  "PERMISSION_REVOKED": "Permissions révoquées avec succès",
+  "SUMMARY_REVOKE_PERMISSION": "Révoquer les permissions d'un rôle",
+  "PERMISSION_REVOKED_DESC": "Permissions révoquées avec succès",
+  "USER_NOT_FOUND": "Utilisateur non trouvé",
+  "PERMISSION_NOT_FOUND": "Permission non trouvée",
+  "PERMISSION_IDS_REQUIRED": "Les identifiants de permissions sont requis",
+  "PERMISSION_NOT_IN_ROLE": "Certaines permissions ne sont pas attribuées à ce rôle",
+  "INACTIVE_USER_ASSIGN": "Impossible d'attribuer des permissions à un utilisateur inactif",
+  "SYSTEM_ROLE_MODIFY": "Les permissions des rôles système ne peuvent pas être modifiées",
+
+  "PATIENT_CREATED": "Patient créé avec succès",
+  "PATIENT_READ": "Patients récupérés avec succès",
+  "PATIENT_READ_ONE": "Patient récupéré avec succès",
+  "PATIENT_UPDATE": "Patient mis à jour avec succès",
+  "PATIENT_DELETED": "Patient supprimé avec succès",
+
+  "DOCTOR_CREATED": "Docteur créé avec succès",
+  "DOCTOR_READ": "Docteurs récupérés avec succès",
+  "DOCTOR_READ_ONE": "Docteur récupéré avec succès",
+  "DOCTOR_UPDATE": "Docteur mis à jour avec succès",
+  "DOCTOR_DELETED": "Docteur supprimé avec succès"
+
+}

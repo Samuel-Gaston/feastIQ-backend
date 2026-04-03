@@ -1,0 +1,39 @@
+{
+  "ROLE_CREATED": "Role created successfully",
+  "ROLE_FETCHED": "Role fetched successfully",
+  "ROLEPERMISSION_FETCHED": "Permissions fetched successfully",
+  "UPDATED_ROLE": "Role updated successfully",
+  "DELETED_ROLE": "Role deleted successfully",
+  "ROLE_ALREADY_EXISTS": "Role with this name already exists",
+  "ROLE_NOT_FOUND": "Role not found",
+  "PERMISSIONS_NOT_FOUND": "Some permissions not found",
+  "SERVER_ERROR": "An unexpected error occurred",
+  
+  "PERMISSION_CREATED": "Permission created successfully",
+  "PERMISSION_READ": "Permissions retrieved successfully",
+  "PERMISSION_ASSIGNED_TO_USER": "Permissions assigned to user successfully",
+  "PERMISSION_ASSIGNED_TO_ROLE": "Permissions assigned to role successfully",
+  "PERMISSION_REVOKED": "Permissions revoked successfully",
+  "SUMMARY_REVOKE_PERMISSION": "Revoke permissions from a role",
+  "PERMISSION_REVOKED_DESC": "Permissions revoked successfully",
+  "USER_NOT_FOUND": "User not found",
+  "PERMISSION_NOT_FOUND": "Permission not found",
+  "PERMISSION_IDS_REQUIRED": "Permission IDs are required",
+  "PERMISSION_NOT_IN_ROLE": "Some permissions are not assigned to this role",
+  "INACTIVE_USER_ASSIGN": "Cannot assign permissions to an inactive user",
+  "SYSTEM_ROLE_MODIFY": "System role permissions cannot be modified",
+
+  "PATIENT_CREATED": "Patient created successfully",
+  "PATIENT_READ": "Patients fetched successfully",
+  "PATIENT_READ_ONE": "Patient fetched successfully",
+  "PATIENT_UPDATE": "Patient updated successfully",
+  "PATIENT_DELETED": "Patient deleted successfully",
+
+  "DOCTOR_CREATED": "Doctor created successfully",
+  "DOCTOR_READ": "Doctors fetched successfully",
+  "DOCTOR_READ_ONE": "Doctor fetched successfully",
+  "DOCTOR_UPDATE": "Doctor updated successfully",
+  "DOCTOR_DELETED": "Doctor deleted successfully"
+
+  
+}

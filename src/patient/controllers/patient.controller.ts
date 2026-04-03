@@ -1,0 +1,97 @@
+import { Body, Post,Get, Param, Patch, Delete, Controller} from "@nestjs/common";
+import { PatientService } from "../services/patient.service";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { CreatePatientDTO } from "../dtos/create-patient.dto";
+import { I18n, I18nContext } from "nestjs-i18n";
+import { Roles } from "../../common/decorators/role.decorator";
+import { RoleEnum } from "../../common/enums/role.enum";
+import { Permissions } from "../../common/decorators/permission.decorator";
+import { PermissionCode } from "../../common/enums/permission.enum";
+import { UpdatePatientDTO } from "../dtos/update-patient.dto";
+
+
+@ApiTags('Patients')
+@ApiResponse({status:404, description:'NOT FOUND'})
+@ApiResponse({ status: 400, description: "BAD_REQUEST" })
+@ApiResponse({ status: 401, description: "UNAUTHORIZED" })
+@ApiResponse({ status: 403, description: "FORBIDDEN" })
+@ApiResponse({ status: 404, description: "ROLE_NOT_FOUND" })
+@ApiResponse({ status: 422, description: "VALIDATION_FAILED" })
+@ApiResponse({ status: 500, description: "SERVER_ERROR" })
+@Controller('patients')
+export class PatientController{
+   constructor(
+    private readonly patientservice: PatientService
+   ){}
+
+   @Post()
+   @Roles(RoleEnum.PATIENT)
+   @Permissions(PermissionCode.PERMISSION_CREATE)
+   @ApiOperation({summary:"create a patient"})
+   @ApiResponse({status:200, description:"patient created successfully"})
+   async create(
+    @Body() dto:CreatePatientDTO,
+    @I18n() i18n:I18nContext
+   ){
+    const response = await this.patientservice.createPatient(dto)
+    const message = i18n.t("common.PATIENT_CREATED")
+    return {data:response, message}
+   }
+
+   @Get()
+   @Roles(RoleEnum.PATIENT)
+   @Permissions(PermissionCode.PERMISSION_READ)
+   @ApiOperation({summary:"fetch all patients"})
+   @ApiResponse({status:200, description:"patients fetched successfully"})
+   async getAll(
+    @I18n() i18n:I18nContext
+   ){
+    const response = await this.patientservice.getAllPatients()
+    const message = i18n.t("common.PATIENT_READ")
+    return {data:response, message}
+   }
+
+   @Get(':id')
+   @Roles(RoleEnum.PATIENT)
+   @Permissions(PermissionCode.PERMISSION_READ)
+   @ApiOperation({summary:"fetch one patient by Id"})
+   @ApiResponse({status:200, description:"patient fetched successfully"})
+   async getByID(
+    @Param('id') id:string,
+    @I18n() i18n:I18nContext
+   ){
+    const response = await this.patientservice.getPatientById(id)
+    const message = i18n.t("common.PATIENT_READ_ONE")
+    return {data:response, message}
+   }
+
+  @Patch(':id')
+   @Roles(RoleEnum.PATIENT)
+   @Permissions(PermissionCode.PERMISSION_READ)
+   @ApiOperation({summary:"updated a patient"})
+   @ApiResponse({status:200, description:"patient updated successfully"})
+   async update(
+    @Param('id') id:string,
+    @I18n() i18n:I18nContext,
+    @Body() dto:UpdatePatientDTO
+   ){
+    const response = await this.patientservice.updatedPatient(id, dto)
+    const message = i18n.t("common.PATIENT_UPDATE")
+    return {data:response, message}
+   }
+
+   @Delete(':id')
+   @Roles(RoleEnum.PATIENT)
+   @Permissions(PermissionCode.PERMISSION_READ)
+   @ApiOperation({summary:"delete a patient"})
+   @ApiResponse({status:200, description:"patient deleted successfully"})
+   async delete(
+    @Param('id') id:string,
+    @I18n() i18n:I18nContext,
+   ){
+    const response = await this.patientservice.deletePatient(id)
+    const message = i18n.t("common.PATIENT_DELETED")
+    return {data:response, message}
+   }
+
+}
