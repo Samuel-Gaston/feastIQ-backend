@@ -9,6 +9,8 @@ import { RoleEnum } from "../../common/enums/role.enum";
 import { PermissionCode } from "../../common/enums/permission.enum";
 
 
+
+@ApiTags('Roles')
 @ApiResponse({status:404, description:'NOT FOUND'})
 @ApiResponse({ status: 400, description: "BAD_REQUEST" })
 @ApiResponse({ status: 401, description: "UNAUTHORIZED" })
@@ -16,7 +18,6 @@ import { PermissionCode } from "../../common/enums/permission.enum";
 @ApiResponse({ status: 404, description: "ROLE_NOT_FOUND" })
 @ApiResponse({ status: 422, description: "VALIDATION_FAILED" })
 @ApiResponse({ status: 500, description: "SERVER_ERROR" })
-@ApiTags('Roles')
 @Controller('roles')
 export class RoleController{
      constructor(
@@ -61,7 +62,7 @@ export class RoleController{
     ){
       const response = await this.roleService.getRoleById(id);
       const message = i18n.t("common.ROLE_FETCHED")
-      return {response, message};
+      return {data:response, message};
      }
 
      @Get(':id/permission')
@@ -74,7 +75,7 @@ export class RoleController{
         @I18n() i18n:I18nContext
      ){
          const response = await this.roleService.getPermissionsForRole(id);
-         const message = i18n.t("common.ROLEPERMISSION_FETCHED")
+         const message = i18n.t("common.ROLE_PERMISSION_FETCHED")
          return {response, message}
      }
 

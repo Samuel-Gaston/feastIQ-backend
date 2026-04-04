@@ -10,6 +10,7 @@ export class Permission extends Document {
   @Prop({ required: true, unique: true, enum: PermissionCode })
   code?: PermissionCode;
 
+  
   @Prop()
   description?: string;
 

@@ -5,3 +5,4 @@ export class UpdatePatientDTO extends PartialType(
   OmitType(CreatePatientDTO, ['email'] as const),
 ) {
 }
+

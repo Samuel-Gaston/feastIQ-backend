@@ -47,7 +47,7 @@ export class PatientService{
         password: hashedPassword,
         isVerified: true,
         isActive: true,
-        roles: patientRole,
+        roles: patientRole._id,
     });
     await user.save(); 
 
@@ -61,28 +61,33 @@ export class PatientService{
     await patient.save();
 
     // Optional: populate the user's roles for response
-    await patient.populate('user.roles');
+  await patient.populate({ path: 'user', populate: { path: 'roles' } });
 
     return patient;
 }
     
 
      async getAllPatients(): Promise<Patient[]>{
-        const Patients = await this.patientModel.find().populate('user', 'name email').populate('roles', 'name description');
+        const Patients = await this.patientModel.find().populate({path:'user'}).populate({path:'role'});
         return Patients;
     }
         
         
     async getPatientById(id:string): Promise<Patient>{
-        const Patient = await this.patientModel.findById(id).populate('user', 'name email').populate('roles', 'name description');
+        const Patient = await this.patientModel.findById(id).populate({path:'user'}).populate({path:'role'});
         if(!Patient){
             throw new HttpException("Patient not found", HttpStatus.NOT_FOUND)
         }
         return Patient;
     }
         
-    async updatedPatient(id:string, dto:UpdatePatientDTO): Promise<Patient>{
-        const Patient = await this.patientModel.findByIdAndUpdate(id, {dto}, {new:true})
+
+    async updatedPatient(id:string, dto:CreatePatientDTO): Promise<Patient>{
+           const existPatient = await this.patientModel.findById(id)
+        if(!existPatient){
+            throw new HttpException("Patient not found", HttpStatus.NOT_FOUND)
+        }
+    const Patient = await this.patientModel.findByIdAndUpdate(id, dto, {new:true})
     if(!Patient){
         throw new HttpException("Patient not found", HttpStatus.CONFLICT)
     }
@@ -91,11 +96,42 @@ export class PatientService{
 
         
     async deletePatient(id:string): Promise<void>{
+           const existPatient = await this.patientModel.findById(id)
+        if(!existPatient){
+            throw new HttpException("Patient not found", HttpStatus.NOT_FOUND)
+        }
         const Patient = await this.patientModel.findByIdAndDelete(id);
         if(!Patient){
             throw new HttpException("Patient not found", HttpStatus.NOT_FOUND)
         }
     }
+
+      async findPatientProfile(id: string): Promise<Patient> {
+       const patient = await this.patientModel
+      .findOne({ user: id })
+      .populate({ path: 'user', populate: { path: 'roles' } });
+     
+      if (!patient) {
+      throw new HttpException('Patient profile not found', HttpStatus.NOT_FOUND);
+      }
+
+      return patient;
+    }
+
+
+    async updatePatientProfile(id: string, dto: UpdatePatientDTO): Promise<Patient> {
+    const existPatient = await this.patientModel.findOne({ user: id });
+    if (!existPatient) {
+       throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
+     }
+     const patient = await this.patientModel.findByIdAndUpdate(
+     existPatient._id,  dto, { new: true }).populate({ path: 'user', populate: { path: 'roles' } });
+
+      if (!patient) {
+     throw new HttpException('Failed to update patient profile', HttpStatus.INTERNAL_SERVER_ERROR);
+     }
+     return patient;
+}
 
 
 }

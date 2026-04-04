@@ -25,6 +25,7 @@ export class Patient extends Document{
   @Prop({type: Types.ObjectId, ref: 'Role'})
   role?:Role;
 
+  
   @Prop({type: Types.ObjectId, ref: 'User'})
   user?:User;
 

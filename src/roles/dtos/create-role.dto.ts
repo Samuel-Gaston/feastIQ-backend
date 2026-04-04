@@ -7,8 +7,8 @@ export class CreateRoleDTO {
   @Prop({ required: true })
   name?: string;
 
-  @ApiProperty({description:"The description of the role"})
-  @Prop({ required: true })
+  @ApiPropertyOptional({description:"The description of the role"})
+  @Prop({ required: false })
   description?: string;
  
  @ApiPropertyOptional({description: "The permissions associated with the role"})

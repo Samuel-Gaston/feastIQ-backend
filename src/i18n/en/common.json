@@ -1,7 +1,7 @@
 {
   "ROLE_CREATED": "Role created successfully",
   "ROLE_FETCHED": "Role fetched successfully",
-  "ROLEPERMISSION_FETCHED": "Permissions fetched successfully",
+  "ROLE_PERMISSION_FETCHED": "Permissions fetched successfully",
   "UPDATED_ROLE": "Role updated successfully",
   "DELETED_ROLE": "Role deleted successfully",
   "ROLE_ALREADY_EXISTS": "Role with this name already exists",
@@ -28,12 +28,24 @@
   "PATIENT_READ_ONE": "Patient fetched successfully",
   "PATIENT_UPDATE": "Patient updated successfully",
   "PATIENT_DELETED": "Patient deleted successfully",
+  "READ_PATIENT_PROFILE": "Patient profile retrieved successfully",
+  "UPDATE_PATIENT_PROFILE": "Patient profile updated successfully",
 
   "DOCTOR_CREATED": "Doctor created successfully",
   "DOCTOR_READ": "Doctors fetched successfully",
   "DOCTOR_READ_ONE": "Doctor fetched successfully",
   "DOCTOR_UPDATE": "Doctor updated successfully",
-  "DOCTOR_DELETED": "Doctor deleted successfully"
+  "DOCTOR_DELETED": "Doctor deleted successfully",
+  "READ_DOCTOR_PROFILE": "Doctor profile retrieved successfully",
+  "UPDATED_DOCTOR_PROFILE": "Doctor profile updated successfully",
+
+  "USER_CREATE": "User created successfully",
+  "USER_READ": "Users retrieved successfully",
+  "USER_READ_ONE": "User retrieved successfully",
+  "USER_READ_EMAIL": "User found successfully by email",
+  "USER_UPDATE": "User updated successfully",
+  "USER_DELETE": "User deleted successfully",
+  "USER_ACTIVATE": "User activated successfully"
 
   
 }

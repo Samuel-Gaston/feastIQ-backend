@@ -6,6 +6,7 @@ import { PermissionCode } from "../../common/enums/permission.enum";
 @Schema({timestamps:true})
 export class CreatePermissionDTO{
     
+    
     @ApiProperty({description:"The name of the permission"})
     @Prop()
     name?:string;

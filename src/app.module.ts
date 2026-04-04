@@ -3,11 +3,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { I18nModule, I18nJsonLoader, QueryResolver, AcceptLanguageResolver } from 'nestjs-i18n';
+import { I18nModule, I18nJsonLoader, AcceptLanguageResolver } from 'nestjs-i18n';
 import * as path from 'path';
 import { RolesModule } from './roles/roles.module';
 import { DoctorModule } from './doctor/doctor.module';
 import { PatientModule } from './patient/patient.module';
+import { UserModule } from './user/user.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { mailConfig } from './config/mail.config';
 
 @Module({
   imports: [
@@ -28,6 +31,12 @@ import { PatientModule } from './patient/patient.module';
       resolvers: [new AcceptLanguageResolver()],
     }),
 
+       MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => mailConfig(configService),
+    }),
+
     // MongoDB connection
     MongooseModule.forRootAsync({
       inject: [ConfigService],
@@ -37,6 +46,7 @@ import { PatientModule } from './patient/patient.module';
     }),
 
     RolesModule,
+    UserModule,
     PatientModule,
     DoctorModule
 

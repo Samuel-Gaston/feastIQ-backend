@@ -44,11 +44,11 @@ export class PermissionService{
         return permissions;
     }
 
+
     async assignPermissionsToUser(
     userId: string,
     assignPermissionsDto: AssignPermissionDTO,
         ): Promise<User> {
-
          const { permissionIds } = assignPermissionsDto;
 
      // Validate input
@@ -62,7 +62,7 @@ export class PermissionService{
   // Find user
   const user = await this.userModel
     .findById(userId)
-    .populate('permissions');
+    .populate({path:'permissions'});
 
   if (!user) {
     throw new HttpException(
@@ -77,6 +77,7 @@ export class PermissionService{
       HttpStatus.BAD_REQUEST,
     );
   }
+
 
   // Find permissions
   const permissions = await this.permissionModel.find({
@@ -108,11 +109,11 @@ export class PermissionService{
   return user;
 }
 
-    async getAllUserPermission(userId:string): Promise<Permission[]>{
+    async getAllUserPermission(userId:string){
       const user = await this.userModel.findById(userId)
-       .populate<{ permissions: Permission[] }>('permissions');
+       .populate({path:'permissions'});
       if(!user){
-                throw new HttpException("Failed to retrieve permissions", HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException("User not found", HttpStatus.NOT_FOUND);
       }
       return user.permissions;
     }

@@ -3,7 +3,7 @@ import { Document, Types } from "mongoose";
 import { Permission } from "../../roles/schemas/permission.schema";
 import { Role } from "../../roles/schemas/role.schema";
 import { Doctor } from "../../doctor/schemas/doctor.schema";
-
+import { Patient } from "../../patient/schemas/patient.schema";
 
 @Schema({timestamps:true})
 export class User extends Document{
@@ -32,7 +32,7 @@ export class User extends Document{
     doctors?: Doctor;
 
     @Prop({ type: Types.ObjectId, ref: 'Patient' })
-    patients?: Doctor;
+    patients?: Patient;
 
     
 

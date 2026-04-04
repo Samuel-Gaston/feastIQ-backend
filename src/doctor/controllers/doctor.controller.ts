@@ -8,6 +8,10 @@ import { RoleEnum } from "../../common/enums/role.enum";
 import { Permissions } from "../../common/decorators/permission.decorator";
 import { PermissionCode } from "../../common/enums/permission.enum";
 import { UpdateDoctorDto } from "../dtos/update-doctor.dto";
+import { UserService } from "../../user/services/user.service";
+import { CurrentUser } from "../../common/decorators/current-user.decorator";
+import { User } from "../../user/schemas/user.schema";
+
 
 
 @ApiTags('Doctors')
@@ -21,7 +25,8 @@ import { UpdateDoctorDto } from "../dtos/update-doctor.dto";
 @Controller('doctors')
 export class DoctorController{
    constructor(
-    private readonly doctorservice: DoctorService
+    private readonly doctorservice: DoctorService,
+    // private readonly userservice: UserService
    ){}
 
    @Post()
@@ -65,7 +70,7 @@ export class DoctorController{
     return {data:response, message}
    }
 
-  @Patch(':id')
+   @Patch(':id')
    @Roles(RoleEnum.ADMIN)
    @Permissions(PermissionCode.PERMISSION_READ)
    @ApiOperation({summary:"updated a doctor"})
@@ -93,5 +98,30 @@ export class DoctorController{
     const message = i18n.t("common.DOCTOR_DELETED")
     return {data:response, message}
    }
+
+    @Get('me/doctor-profile')
+     @ApiOperation({summary:'find a doctor profile'})
+     @ApiResponse({status:200, description:'doctor profile found successfully'})
+     async findDoctorProfile(
+    @CurrentUser() user: User,
+    @I18n() i18n:I18nContext,
+     ){
+    const response = await this.doctorservice.findDoctorProfile(user._id.toString())
+    const message = i18n.t("common.READ_DOCTOR_PROFILE")
+    return {data:response, message}
+     }
+
+     @Patch('me/doctor-profile')
+     @ApiOperation({summary:"update profile information"})
+     @ApiResponse({status:200, description:'profile information updated successfully'})
+     async updateProfile(
+      @CurrentUser() user: User,
+      @Body() dto:UpdateDoctorDto,
+      @I18n() i18n:I18nContext,
+     ){
+      const response = await this.doctorservice.updateDoctorProfile(user._id.toString(), dto)
+      const message = i18n.t("common.UPDATED_DOCTOR_PROFILE")
+      return {data:response, message}
+     }
 
 }

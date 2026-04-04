@@ -64,7 +64,7 @@ async createRole(dto: CreateRoleDTO) {
 
    async getRoleById(id:string): Promise<Role>{
     const role = await this.roleModel.findById({
-        id:id,
+        _id:id,
         ref:'permissions'
     })
     if(role){
@@ -80,7 +80,7 @@ async createRole(dto: CreateRoleDTO) {
    async getPermissionsForRole(roleId:string): Promise<Role>{
     const role = await this.roleModel.findById(roleId).populate('permissions', 'name')
     if(role){
-        return role;
+        return role.permissions as unknown as Role;
     }
     else{
         throw new Error("failed to fetched permissions by role")
@@ -94,22 +94,20 @@ async createRole(dto: CreateRoleDTO) {
     if(!role){
         throw new Error("Role not found");
     }
-     await this.roleModel.findByIdAndUpdate(id, {
+     const update = await this.roleModel.findByIdAndUpdate(id, {
         name, description
     },{new:true})
-
-  
+     return update;
    }
 
 
-   async remove(id:string): Promise<void>{
+   async remove(id:string){
     const role = await this.roleModel.findById(id);
     if(!role){
         throw new Error("Role not found");
     }
-
-    await this.roleModel.findByIdAndDelete(id);
-  
+    const deletedRole = await this.roleModel.findByIdAndDelete(id);
+      return deletedRole;
     
    }
 

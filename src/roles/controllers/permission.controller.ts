@@ -19,6 +19,7 @@ export class PermissionController{
      
     ){}
 
+
     @Post()
     @Roles(RoleEnum.ADMIN)
     @Permissions(PermissionCode.PERMISSION_CREATE)
@@ -62,11 +63,10 @@ export class PermissionController{
             assignPermissionsDto)
         const message = i18n.t("common.PERMISSION_ASSIGNED_TO_USER")
         return {response, message }
-
 }    
       
 
-    @Get('user/permission')
+    @Get('user/:id/permission')
     @Roles(RoleEnum.ADMIN)
     @Permissions(PermissionCode.PERMISSION_READ_USER_PERMISSIONS)
     @ApiOperation({summary:'reading user permissions'})

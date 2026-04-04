@@ -13,7 +13,6 @@ import { UpdateDoctorDto } from "../dtos/update-doctor.dto";
 
 
 
-
 @Injectable()
 export class DoctorService{
     constructor(
@@ -26,7 +25,8 @@ export class DoctorService{
         @InjectModel(User.name)
         private readonly userModel: Model<User>
     ){}
-
+   
+    //ADMIN ONLY
     async createDoctor(dto:CreateDoctorDto){
         const {name, email, phone, address, country, specialization, licenseNumber} = dto;
     
@@ -54,7 +54,7 @@ export class DoctorService{
             password:hashedPassword,
             isVerified:true,
             isActive:true,
-            roles: doctorRole
+            roles: doctorRole._id
         })
         await user.save();
 
@@ -69,7 +69,7 @@ export class DoctorService{
         user
      })
 
-     await doctor.populate("user.roles")
+     await doctor.populate({path:'user', populate:{path:'roles'}})
        
     return doctor;
     
@@ -77,32 +77,77 @@ export class DoctorService{
     }
 
 
+    // ADMIN ONLY
     async getAllDoctors(): Promise<Doctor[]>{
-        const doctors = await this.doctorModel.find().populate('user', 'name email').populate('roles', 'name description');
+        const doctors = await this.doctorModel.find().populate({path:'user'}).populate({path:'role'});
         return doctors;
     }
 
-
+   // ADMIN ONLY
     async getDoctorById(id:string): Promise<Doctor>{
-        const doctor = await this.doctorModel.findById(id).populate('user', 'name email').populate('roles', 'name description');
+        const doctor = await this.doctorModel.findById(id).populate({path:'user'}).populate({path:'role'});
         if(!doctor){
             throw new HttpException("Doctor not found", HttpStatus.NOT_FOUND)
         }
         return doctor;
     }
 
+
+    //ADMIN ONLY
     async updatedDoctor(id:string, dto:UpdateDoctorDto): Promise<Doctor>{
-        const doctor = await this.doctorModel.findByIdAndUpdate(id, {dto}, {new:true})
+     const existDoctor = await this.doctorModel.findById(id)
+     if(!existDoctor){
+        throw new HttpException("doctor not found", HttpStatus.NOT_FOUND)
+     }
+        const doctor = await this.doctorModel.findByIdAndUpdate(id, dto, {new:true})
     if(!doctor){
-        throw new HttpException("Doctor not found", HttpStatus.CONFLICT)
+        throw new HttpException("Failed to update Doctor", HttpStatus.INTERNAL_SERVER_ERROR)
     }
     return doctor;
     }
 
+    // ADMIN ONLY
     async deleteDoctor(id:string): Promise<void>{
+         const existDoctor = await this.doctorModel.findById(id)
+     if(!existDoctor){
+        throw new HttpException("doctor not found", HttpStatus.NOT_FOUND)
+     }
         const doctor = await this.doctorModel.findByIdAndDelete(id);
         if(!doctor){
             throw new HttpException("Doctor not found", HttpStatus.NOT_FOUND)
         }
     }
+
+
+   // GET PROFILE (DOCTOR ONLY)
+    async findDoctorProfile(id: string): Promise<User> {
+    const user = await this.doctorModel
+    .findById(id)
+    .populate('permissions')
+    .populate('doctor')
+    .populate('role');
+
+    if (!user) {
+    throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    return user;
+}
+
+    // UPDATE DOCTOR PROFILE (DOCTOR ONLY)
+    async updateDoctorProfile(id: string, dto: UpdateDoctorDto): Promise<Doctor> {
+    const doctor = await this.doctorModel.findById(id);
+    if (!doctor) {
+       throw new HttpException('Doctor not found', HttpStatus.NOT_FOUND);
+    }
+
+    const updated = await this.doctorModel.findByIdAndUpdate(id, dto, { new: true });
+    if (!updated) {
+       throw new HttpException('Failed to update', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    return updated;
+}
+
+
 }

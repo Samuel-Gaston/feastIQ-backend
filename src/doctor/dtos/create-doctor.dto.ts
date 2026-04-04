@@ -2,6 +2,7 @@ import { Prop } from "@nestjs/mongoose";
 import { ApiProperty } from "@nestjs/swagger";
 
 
+
 export class CreateDoctorDto{
 
     @ApiProperty({description: "enter the doctor's name"})

@@ -1,4 +1,4 @@
-import { Body, Post,Get, Param, Patch, Delete, Controller} from "@nestjs/common";
+import { Body, Post,Get, Param, Patch, Delete, Controller, Req} from "@nestjs/common";
 import { PatientService } from "../services/patient.service";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CreatePatientDTO } from "../dtos/create-patient.dto";
@@ -8,6 +8,9 @@ import { RoleEnum } from "../../common/enums/role.enum";
 import { Permissions } from "../../common/decorators/permission.decorator";
 import { PermissionCode } from "../../common/enums/permission.enum";
 import { UpdatePatientDTO } from "../dtos/update-patient.dto";
+import { CurrentUser } from "../../common/decorators/current-user.decorator";
+import { User } from "../../user/schemas/user.schema";
+
 
 
 @ApiTags('Patients')
@@ -65,7 +68,7 @@ export class PatientController{
     return {data:response, message}
    }
 
-  @Patch(':id')
+   @Patch(':id')
    @Roles(RoleEnum.PATIENT)
    @Permissions(PermissionCode.PERMISSION_READ)
    @ApiOperation({summary:"updated a patient"})
@@ -73,7 +76,7 @@ export class PatientController{
    async update(
     @Param('id') id:string,
     @I18n() i18n:I18nContext,
-    @Body() dto:UpdatePatientDTO
+    @Body() dto:CreatePatientDTO
    ){
     const response = await this.patientservice.updatedPatient(id, dto)
     const message = i18n.t("common.PATIENT_UPDATE")
@@ -93,5 +96,31 @@ export class PatientController{
     const message = i18n.t("common.PATIENT_DELETED")
     return {data:response, message}
    }
+
+   @Get('me/patient-profile')
+   @ApiOperation({summary:'find a patient profile'})
+    @ApiResponse({status:200, description:'doctor profile found successfully'})
+   async findMyPatientProfile(
+   @Req() req,
+   @I18n() i18n: I18nContext,
+    ) {
+   const userId = req.user.id;
+   const response = await this.patientservice.findPatientProfile(userId);
+   const message = i18n.t("common.READ_PATIENT_PROFILE");
+   return { data: response, message };
+   }
+
+   @Patch('me/patient-profile')
+   async updateMyPatientProfile(
+   @CurrentUser() user: User,
+   @Body() dto:UpdatePatientDTO,
+   @I18n() i18n:I18nContext
+   ){
+      const response = await this.patientservice.updatePatientProfile(user._id.toString(), dto)
+      const message = i18n.t("common.UPDATE_PATIENT_PROFILE")
+      return {data:response, message}
+   }
+
+  
 
 }
