@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Doctor } from "../schemas/doctor.schema";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import { CreateDoctorDto } from "../dtos/create-doctor.dto";
 import { Role } from "../../roles/schemas/role.schema";
 import { RoleEnum } from "../../common/enums/role.enum";
@@ -9,6 +9,7 @@ import { CodeGenerator } from "../../../utils/code-generator";
 import * as bcrypt from 'bcryptjs';
 import { User } from "../../user/schemas/user.schema";
 import { UpdateDoctorDto } from "../dtos/update-doctor.dto";
+import { Patient } from "../../patient/schemas/patient.schema";
 
 
 
@@ -23,7 +24,10 @@ export class DoctorService{
         private readonly roleModel: Model<Role>,
 
         @InjectModel(User.name)
-        private readonly userModel: Model<User>
+        private readonly userModel: Model<User>,
+
+        @InjectModel(Patient.name)
+        private readonly patientModel: Model<Patient>
     ){}
    
     //ADMIN ONLY
@@ -120,12 +124,12 @@ export class DoctorService{
 
 
    // GET PROFILE (DOCTOR ONLY)
-    async findDoctorProfile(id: string): Promise<User> {
+    async findDoctorProfile(id: string): Promise<Doctor> {
     const user = await this.doctorModel
     .findById(id)
-    .populate('permissions')
-    .populate('doctor')
-    .populate('role');
+    .populate({path:'permissions'})
+    .populate({path:'doctor'})
+    .populate({path:'role'});
 
     if (!user) {
     throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -145,8 +149,21 @@ export class DoctorService{
     if (!updated) {
        throw new HttpException('Failed to update', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
     return updated;
+     }
+
+
+async getPatientLinkedToDoctor(doctorId: string): Promise<Patient[]> {
+  const doctor = await this.doctorModel.findById(doctorId);
+  if (!doctor) {
+    throw new HttpException('Doctor not found', HttpStatus.NOT_FOUND);
+  }
+
+  const patients = await this.patientModel
+    .find({ doctor: new Types.ObjectId(doctorId) })
+    .populate({ path: 'doctor' });
+
+  return patients;
 }
 
 

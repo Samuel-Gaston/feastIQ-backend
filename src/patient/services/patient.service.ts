@@ -9,6 +9,7 @@ import { RoleEnum } from "../../common/enums/role.enum";
 import { CodeGenerator } from "../../../utils/code-generator";
 import * as bcrypt from 'bcryptjs'
 import { UpdatePatientDTO } from "../dtos/update-patient.dto";
+import { Doctor } from "../../doctor/schemas/doctor.schema";
 
 
 @Injectable()
@@ -21,7 +22,10 @@ export class PatientService{
         private readonly roleModel: Model<Role>,
 
         @InjectModel(User.name)
-        private readonly userModel: Model<User>
+        private readonly userModel: Model<User>,
+
+        @InjectModel(Doctor.name)
+        private readonly doctorModel: Model<Doctor>
     ){}
 
 
@@ -106,9 +110,9 @@ export class PatientService{
         }
     }
 
-      async findPatientProfile(id: string): Promise<Patient> {
+      async findPatientProfile(_id: string): Promise<Patient> {
        const patient = await this.patientModel
-      .findOne({ user: id })
+      .findOne({ user: _id })
       .populate({ path: 'user', populate: { path: 'roles' } });
      
       if (!patient) {
@@ -132,6 +136,21 @@ export class PatientService{
      }
      return patient;
 }
-
+    
+     
+    async LinkPatientToDoctor(patientId:string, doctorId:string): Promise<Patient>{
+        const patient = await this.patientModel.findById({_id:patientId});
+        if(!patient){
+            throw new HttpException("Patient not found", HttpStatus.NOT_FOUND)
+        }
+        const doctor = await this.doctorModel.findById({_id:doctorId});
+        if(!doctor){
+            throw new HttpException("Doctor not found", HttpStatus.NOT_FOUND)
+        }
+        patient.doctor = doctor._id as any;
+        await patient.save();
+        await patient.populate({path:'doctor'});
+        return patient;
+     }
 
 }

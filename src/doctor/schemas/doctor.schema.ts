@@ -4,6 +4,7 @@ import { Role } from "../../roles/schemas/role.schema";
 import { User } from "../../user/schemas/user.schema";
 import { Permission } from "../../roles/schemas/permission.schema";
 import { Document } from "mongoose";
+import { Patient } from "../../patient/schemas/patient.schema";
 
 @Schema({timestamps:true})
 export class Doctor extends Document{
@@ -33,6 +34,9 @@ export class Doctor extends Document{
 
     @Prop({ type: Types.ObjectId, ref: 'Role' })
     role?:Role;
+
+    @Prop({ type: Types.ObjectId, ref: 'Patient' })
+    patient?: Patient[];
 
     // @Prop({ type: [{ type: Types.ObjectId, ref: 'Permission' }] })
     // permissions?: Permission[];

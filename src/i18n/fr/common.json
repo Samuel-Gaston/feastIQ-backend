@@ -30,6 +30,7 @@
   "PATIENT_DELETED": "Patient supprimé avec succès",
   "READ_PATIENT_PROFILE": "Profil du patient récupéré avec succès",
   "UPDATE_PATIENT_PROFILE": "Profil du patient mis à jour avec succès",
+ "PATIENT_ASSIGN_TO_DOCTOR": "Patient assigné au médecin avec succès",
 
   "DOCTOR_CREATED": "Docteur créé avec succès",
   "DOCTOR_READ": "Docteurs récupérés avec succès",
@@ -38,13 +39,21 @@
   "DOCTOR_DELETED": "Docteur supprimé avec succès",
   "READ_DOCTOR_PROFILE": "Profil du médecin récupéré avec succès",
   "UPDATED_DOCTOR_PROFILE": "Profil du médecin mis à jour avec succès",
+  "PATIENT_LINKED_TO_DOCTOR": "Patients lié au médecin récupérés avec succès",
 
-    "USER_CREATE": "Utilisateur créé avec succès",
+  "USER_CREATE": "Utilisateur créé avec succès",
   "USER_READ": "Utilisateurs récupérés avec succès",
   "USER_READ_ONE": "Utilisateur récupéré avec succès",
   "USER_READ_EMAIL": "Utilisateur trouvé avec succès par email",
   "USER_UPDATE": "Utilisateur mis à jour avec succès",
   "USER_DELETE": "Utilisateur supprimé avec succès",
-  "USER_ACTIVATE": "Utilisateur activé avec succès"
+  "USER_ACTIVATE": "Utilisateur activé avec succès",
+
+  "APPOINTMENT_CREATED": "Rendez-vous créé avec succès",
+  "DOCTOR_APPOINTMENTS_FETCHED": "Rendez-vous du médecin récupérés avec succès",
+  "APPOINTMENTS_FETCHED": "Rendez-vous récupérés avec succès",
+  "APPOINTMENT_FETCHED": "Rendez-vous récupéré avec succès",
+  "APPOINTMENT_UPDATED": "Rendez-vous mis à jour avec succès",
+  "APPOINTMENT_DELETED": "Rendez-vous supprimé avec succès"
 
 }

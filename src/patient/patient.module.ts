@@ -5,6 +5,7 @@ import { Role, RoleSchema } from "../roles/schemas/role.schema";
 import { User, UserSchema } from "../user/schemas/user.schema";
 import { PatientController } from "./controllers/patient.controller";
 import { PatientService } from "./services/patient.service";
+import {Doctor, DoctorSchema } from "../doctor/schemas/doctor.schema";
 
 
 
@@ -13,9 +14,10 @@ import { PatientService } from "./services/patient.service";
 @Module({
     imports:[
        MongooseModule.forFeature([
-         {name: Patient.name, schema:PatientSchema},
-          {name: Role.name, schema:RoleSchema},
-           {name: User.name, schema:UserSchema}
+        {name: Patient.name, schema:PatientSchema},
+        {name: Role.name, schema:RoleSchema},
+        {name: User.name, schema:UserSchema},
+        {name: Doctor.name, schema:DoctorSchema}
        ])
     ],
     providers:[PatientService],

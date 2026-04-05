@@ -1,6 +1,6 @@
 import { Body, Post,Get, Param, Patch, Delete, Controller, Req} from "@nestjs/common";
 import { PatientService } from "../services/patient.service";
-import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CreatePatientDTO } from "../dtos/create-patient.dto";
 import { I18n, I18nContext } from "nestjs-i18n";
 import { Roles } from "../../common/decorators/role.decorator";
@@ -29,7 +29,7 @@ export class PatientController{
 
    @Post()
    @Roles(RoleEnum.PATIENT)
-   @Permissions(PermissionCode.PERMISSION_CREATE)
+   @Permissions(PermissionCode.PATIENT_CREATE)
    @ApiOperation({summary:"create a patient"})
    @ApiResponse({status:200, description:"patient created successfully"})
    async create(
@@ -43,7 +43,7 @@ export class PatientController{
 
    @Get()
    @Roles(RoleEnum.PATIENT)
-   @Permissions(PermissionCode.PERMISSION_READ)
+   @Permissions(PermissionCode.PATIENT_READ)
    @ApiOperation({summary:"fetch all patients"})
    @ApiResponse({status:200, description:"patients fetched successfully"})
    async getAll(
@@ -56,7 +56,7 @@ export class PatientController{
 
    @Get(':id')
    @Roles(RoleEnum.PATIENT)
-   @Permissions(PermissionCode.PERMISSION_READ)
+   @Permissions(PermissionCode.PATIENT_READ_ONE)
    @ApiOperation({summary:"fetch one patient by Id"})
    @ApiResponse({status:200, description:"patient fetched successfully"})
    async getByID(
@@ -70,7 +70,7 @@ export class PatientController{
 
    @Patch(':id')
    @Roles(RoleEnum.PATIENT)
-   @Permissions(PermissionCode.PERMISSION_READ)
+   @Permissions(PermissionCode.PATIENT_UPDATE)
    @ApiOperation({summary:"updated a patient"})
    @ApiResponse({status:200, description:"patient updated successfully"})
    async update(
@@ -85,7 +85,7 @@ export class PatientController{
 
    @Delete(':id')
    @Roles(RoleEnum.PATIENT)
-   @Permissions(PermissionCode.PERMISSION_READ)
+   @Permissions(PermissionCode.PATIENT_DELETE)
    @ApiOperation({summary:"delete a patient"})
    @ApiResponse({status:200, description:"patient deleted successfully"})
    async delete(
@@ -104,7 +104,7 @@ export class PatientController{
    @Req() req,
    @I18n() i18n: I18nContext,
     ) {
-   const userId = req.user.id;
+   const userId = req.user._id;
    const response = await this.patientservice.findPatientProfile(userId);
    const message = i18n.t("common.READ_PATIENT_PROFILE");
    return { data: response, message };
@@ -118,6 +118,21 @@ export class PatientController{
    ){
       const response = await this.patientservice.updatePatientProfile(user._id.toString(), dto)
       const message = i18n.t("common.UPDATE_PATIENT_PROFILE")
+      return {data:response, message}
+   }
+
+   @Post('link-patient-to-doctor/:patientId/:doctorId')
+   @Roles(RoleEnum.ADMIN)
+   @Permissions(PermissionCode.PATIENT_ASSIGN_TO_DOCTOR)
+   @ApiOperation({summary:'Assign a patient to a doctor'})
+   @ApiResponse({status:200, description:'Patient assigned to a Doctor done successfully'})
+   async assignPatientToDoctor(
+      @Param('patientId') patientId:string,
+      @Param('doctorId') doctorId:string,
+      @I18n() i18n: I18nContext,
+   ){
+      const response = await this.patientservice.LinkPatientToDoctor(patientId, doctorId)
+      const message = i18n.t("common.PATIENT_ASSIGN_TO_DOCTOR")
       return {data:response, message}
    }
 

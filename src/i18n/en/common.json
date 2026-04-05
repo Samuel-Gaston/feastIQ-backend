@@ -30,6 +30,7 @@
   "PATIENT_DELETED": "Patient deleted successfully",
   "READ_PATIENT_PROFILE": "Patient profile retrieved successfully",
   "UPDATE_PATIENT_PROFILE": "Patient profile updated successfully",
+  "PATIENT_ASSIGN_TO_DOCTOR": "Patient assigned to doctor successfully",
 
   "DOCTOR_CREATED": "Doctor created successfully",
   "DOCTOR_READ": "Doctors fetched successfully",
@@ -38,6 +39,7 @@
   "DOCTOR_DELETED": "Doctor deleted successfully",
   "READ_DOCTOR_PROFILE": "Doctor profile retrieved successfully",
   "UPDATED_DOCTOR_PROFILE": "Doctor profile updated successfully",
+  "PATIENT_LINKED_TO_DOCTOR": "Patients linked to doctor fetched successfully",
 
   "USER_CREATE": "User created successfully",
   "USER_READ": "Users retrieved successfully",
@@ -45,7 +47,14 @@
   "USER_READ_EMAIL": "User found successfully by email",
   "USER_UPDATE": "User updated successfully",
   "USER_DELETE": "User deleted successfully",
-  "USER_ACTIVATE": "User activated successfully"
+  "USER_ACTIVATE": "User activated successfully",
+
+  "APPOINTMENT_CREATED": "Appointment created successfully",
+  "DOCTOR_APPOINTMENTS_FETCHED": "Doctor appointments retrieved successfully",
+  "APPOINTMENTS_FETCHED": "Appointments retrieved successfully",
+  "APPOINTMENT_FETCHED": "Appointment retrieved successfully",
+  "APPOINTMENT_UPDATED": "Appointment updated successfully",
+  "APPOINTMENT_DELETED": "Appointment deleted successfully"
 
   
 }

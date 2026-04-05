@@ -31,7 +31,7 @@ export class DoctorController{
 
    @Post()
    @Roles(RoleEnum.ADMIN)
-   @Permissions(PermissionCode.PERMISSION_CREATE)
+   @Permissions(PermissionCode.DOCTOR_CREATE)
    @ApiOperation({summary:"create a doctor"})
    @ApiResponse({status:200, description:"doctor created successfully"})
    async create(
@@ -45,7 +45,7 @@ export class DoctorController{
 
    @Get()
    @Roles(RoleEnum.ADMIN)
-   @Permissions(PermissionCode.PERMISSION_READ)
+   @Permissions(PermissionCode.DOCTOR_READ)
    @ApiOperation({summary:"fetch all doctors"})
    @ApiResponse({status:200, description:"doctors fetched successfully"})
    async getAll(
@@ -58,7 +58,7 @@ export class DoctorController{
 
    @Get(':id')
    @Roles(RoleEnum.ADMIN)
-   @Permissions(PermissionCode.PERMISSION_READ)
+   @Permissions(PermissionCode.DOCTOR_READ)
    @ApiOperation({summary:"fetch one doctor by Id"})
    @ApiResponse({status:200, description:"doctor fetched successfully"})
    async getByID(
@@ -72,7 +72,7 @@ export class DoctorController{
 
    @Patch(':id')
    @Roles(RoleEnum.ADMIN)
-   @Permissions(PermissionCode.PERMISSION_READ)
+   @Permissions(PermissionCode.DOCTOR_READ)
    @ApiOperation({summary:"updated a doctor"})
    @ApiResponse({status:200, description:"doctor updated successfully"})
    async update(
@@ -87,7 +87,7 @@ export class DoctorController{
 
    @Delete(':id')
    @Roles(RoleEnum.ADMIN)
-   @Permissions(PermissionCode.PERMISSION_READ)
+   @Permissions(PermissionCode.DOCTOR_READ)
    @ApiOperation({summary:"delete a doctor"})
    @ApiResponse({status:200, description:"doctor deleted successfully"})
    async delete(
@@ -106,7 +106,7 @@ export class DoctorController{
     @CurrentUser() user: User,
     @I18n() i18n:I18nContext,
      ){
-    const response = await this.doctorservice.findDoctorProfile(user._id.toString())
+     const response = await this.doctorservice.findDoctorProfile(user._id.toString())
     const message = i18n.t("common.READ_DOCTOR_PROFILE")
     return {data:response, message}
      }
@@ -121,6 +121,21 @@ export class DoctorController{
      ){
       const response = await this.doctorservice.updateDoctorProfile(user._id.toString(), dto)
       const message = i18n.t("common.UPDATED_DOCTOR_PROFILE")
+      return {data:response, message}
+     }
+
+
+     @Get(':id/patients')
+     @Roles(RoleEnum.DOCTOR)
+     @Permissions(PermissionCode.READ_DOCTOR_ASSIGN_TO_PATIENT)
+     @ApiOperation({summary:'get all patients linked to a doctor'})
+     @ApiResponse({status:200, description:'Patients linked to doctor fetched successfully'})
+     async patientsLinkedToDoctor(
+       @Param('id') id:string,
+      @I18n() i18n:I18nContext,
+     ){
+      const response = await this.doctorservice.getPatientLinkedToDoctor(id)
+      const message = i18n.t("common.PATIENT_LINKED_TO_DOCTOR")
       return {data:response, message}
      }
 
