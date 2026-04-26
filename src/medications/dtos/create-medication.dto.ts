@@ -25,9 +25,9 @@ export class CreateMedicationDTO{
     instruction?:string;
 
     @ApiProperty({description:'the startDate'})
-    startDate?:string;
+    startDate?:Date;
 
     @ApiProperty({description:'the endDate'})
-    endDate?:string;
+    endDate?:Date;
 
 }

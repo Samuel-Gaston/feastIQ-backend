@@ -28,10 +28,10 @@ export class Medication extends Document{
     instruction?:string;
 
     @Prop()
-    startDate?:string;
+    startDate?:Date;
 
     @Prop()
-    endDate?:string;
+    endDate?:Date;
 }
 
 export const MedicationSchema = SchemaFactory.createForClass(Medication) 
