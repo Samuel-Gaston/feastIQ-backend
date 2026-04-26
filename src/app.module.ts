@@ -12,6 +12,9 @@ import { UserModule } from './user/user.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { mailConfig } from './config/mail.config';
 import { AppoinmentModule } from './appointment/appointment.module';
+import { PrescriptionModule } from './prescription/prescription.module';
+import { NotificationModule } from './notification/notification.module';
+import { MedicationModule } from './medications/medication.module';
 
 @Module({
   imports: [
@@ -51,6 +54,9 @@ import { AppoinmentModule } from './appointment/appointment.module';
     PatientModule,
     DoctorModule,
     AppoinmentModule,
+    PrescriptionModule,
+    MedicationModule,
+    NotificationModule,
 
   ],
   controllers: [AppController],

@@ -93,7 +93,7 @@ export class PatientService{
         }
     const Patient = await this.patientModel.findByIdAndUpdate(id, dto, {new:true})
     if(!Patient){
-        throw new HttpException("Patient not found", HttpStatus.CONFLICT)
+        throw new HttpException("failed to updated", HttpStatus.INTERNAL_SERVER_ERROR)
     }
     return Patient;
     }
@@ -106,7 +106,7 @@ export class PatientService{
         }
         const Patient = await this.patientModel.findByIdAndDelete(id);
         if(!Patient){
-            throw new HttpException("Patient not found", HttpStatus.NOT_FOUND)
+            throw new HttpException("failed to delet patient", HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 

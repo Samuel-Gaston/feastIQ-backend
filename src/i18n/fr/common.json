@@ -54,6 +54,20 @@
   "APPOINTMENTS_FETCHED": "Rendez-vous récupérés avec succès",
   "APPOINTMENT_FETCHED": "Rendez-vous récupéré avec succès",
   "APPOINTMENT_UPDATED": "Rendez-vous mis à jour avec succès",
-  "APPOINTMENT_DELETED": "Rendez-vous supprimé avec succès"
+  "APPOINTMENT_DELETED": "Rendez-vous supprimé avec succès",
+
+  "PRESCRIPTION_CREATE": "Ordonnance créée avec succès",
+  "PRESCRIPTION_PATIENT_READ": "Ordonnances du patient récupérées avec succès",
+  "PRESCRIPTION_READ_ONE": "Ordonnance récupérée avec succès",
+  "PRESCRIPTION_READ_ALL": "Ordonnances récupérées avec succès",
+  "PRESCRIPTION_UPDATE": "Ordonnance mise à jour avec succès",
+  "PRESCRIPTION_DELETE": "Ordonnance supprimée avec succès",
+
+  "MEDICATION_CREATE": "Ordonnance créée avec succès",
+  "MEDICATION_PATIENT_READ": "Ordonnances du patient récupérées avec succès",
+  "MEDICATION_READ_ONE": "Ordonnance récupérée avec succès",
+  "MEDICATION_READ_ALL": "Ordonnances récupérées avec succès",
+  "MEDICATION_UPDATE": "Ordonnance mise à jour avec succès",
+  "MEDICATION_DELETE": "Ordonnance supprimée avec succès"
 
 }

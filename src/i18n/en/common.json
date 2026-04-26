@@ -54,7 +54,21 @@
   "APPOINTMENTS_FETCHED": "Appointments retrieved successfully",
   "APPOINTMENT_FETCHED": "Appointment retrieved successfully",
   "APPOINTMENT_UPDATED": "Appointment updated successfully",
-  "APPOINTMENT_DELETED": "Appointment deleted successfully"
+  "APPOINTMENT_DELETED": "Appointment deleted successfully",
+
+  "PRESCRIPTION_CREATE": "Prescription created successfully",
+  "PRESCRIPTION_PATIENT_READ": "Patient prescriptions retrieved successfully",
+  "PRESCRIPTION_READ_ONE": "Prescription retrieved successfully",
+  "PRESCRIPTION_READ_ALL": "Prescriptions retrieved successfully",
+  "PRESCRIPTION_UPDATE": "Prescription updated successfully",
+  "PRESCRIPTION_DELETE": "Prescription deleted successfully",
+
+  "MEDICATION_CREATE": "Medication created successfully",
+  "MEDICATION_PATIENT_READ": "Patient MEDICATIONs retrieved successfully",
+  "MEDICATION_READ_ONE": "Medication retrieved successfully",
+  "MEDICATION_READ_ALL": "Medications retrieved successfully",
+  "MEDICATION_UPDATE": "Medication updated successfully",
+  "MEDICATION_DELETE": "Medication deleted successfully"
 
   
 }
