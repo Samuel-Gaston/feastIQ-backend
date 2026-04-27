@@ -27,7 +27,7 @@ export class PrescriptionController{
 
     @Post()
     @Roles(RoleEnum.ADMIN, RoleEnum.DOCTOR)
-    @Permissions(PermissionCode.APPOINTMENT_CREATE)
+    @Permissions(PermissionCode.PRESCRIPTION_CREATE)
     @ApiOperation({summary:'Create a new prescription'})
     @ApiResponse({status:201, description:'prescription created successfully'})
     async create(
@@ -42,7 +42,7 @@ export class PrescriptionController{
 
     @Get(':patientId')
     @Roles(RoleEnum.ADMIN, RoleEnum.DOCTOR, RoleEnum.PATIENT, RoleEnum.SUPER_ADMIN)
-    @Permissions(PermissionCode.APPOINTMENT_READ)
+    @Permissions(PermissionCode.PRESCRIPTION_READ)
     @ApiOperation({summary:'get all prescription for a patient'})
     @ApiResponse({status:200, description:'Patient prescription fetched successfully'})
     async getPatientPrescription(
@@ -56,7 +56,7 @@ export class PrescriptionController{
 
      @Get(':id')
     @Roles(RoleEnum.ADMIN, RoleEnum.DOCTOR,RoleEnum.SUPER_ADMIN)
-    @Permissions(PermissionCode.APPOINTMENT_READ)
+    @Permissions(PermissionCode.PRESCRIPTION_READ)
     @ApiOperation({summary:'get a prescription'})
     @ApiResponse({status:200, description:'Prescription fetched successfully'})
     async getPrescription(
@@ -71,7 +71,7 @@ export class PrescriptionController{
 
     @Get()
     @Roles(RoleEnum.ADMIN,RoleEnum.SUPER_ADMIN)
-    @Permissions(PermissionCode.APPOINTMENT_READ)
+    @Permissions(PermissionCode.PRESCRIPTION_READ)
     @ApiOperation({summary:'get all prescriptions'})
     @ApiResponse({status:200, description:'Prescription fetched successfully'})
     async getPrescriptions(
@@ -86,7 +86,7 @@ export class PrescriptionController{
 
     @Delete(':id')
     @Roles(RoleEnum.ADMIN,RoleEnum.SUPER_ADMIN, RoleEnum.DOCTOR)
-    @Permissions(PermissionCode.APPOINTMENT_READ)
+    @Permissions(PermissionCode.PRESCRIPTION_READ)
     @ApiOperation({summary:'Delete this prescription'})
     @ApiResponse({status:200, description:'Prescription deleted successfully'})
     async delete(
@@ -102,7 +102,7 @@ export class PrescriptionController{
 
     @Patch(':id')
     @Roles(RoleEnum.ADMIN,RoleEnum.SUPER_ADMIN, RoleEnum.DOCTOR)
-    @Permissions(PermissionCode.APPOINTMENT_READ)
+    @Permissions(PermissionCode.PRESCRIPTION_READ)
     @ApiOperation({summary:'Update this prescription'})
     @ApiResponse({status:200, description:'Prescription updated successfully'})
     async update(

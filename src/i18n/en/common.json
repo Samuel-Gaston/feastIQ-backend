@@ -68,7 +68,15 @@
   "MEDICATION_READ_ONE": "Medication retrieved successfully",
   "MEDICATION_READ_ALL": "Medications retrieved successfully",
   "MEDICATION_UPDATE": "Medication updated successfully",
-  "MEDICATION_DELETE": "Medication deleted successfully"
+  "MEDICATION_DELETE": "Medication deleted successfully",
+
+  "REVIEW_CREATE": "Review created successfully",
+  "REVIEW_GET_PATIENT": "Patient reviews retrieved successfully",
+  "REVIEW_GET_DOCTOR": "Doctor reviews retrieved successfully",
+  "REVIEW_GET_ONE": "Review retrieved successfully",
+  "REVIEW_UPDATE": "Review updated successfully",
+  "REVIEW_DELETE": "Review deleted successfully"
+
 
   
 }

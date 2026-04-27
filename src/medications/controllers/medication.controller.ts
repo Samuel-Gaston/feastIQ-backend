@@ -32,7 +32,7 @@ export class MedicationController{
 
     @Post()
     @Roles(RoleEnum.ADMIN,RoleEnum.SUPER_ADMIN, RoleEnum.DOCTOR)
-    @Permissions(PermissionCode.PERMISSION_CREATE)
+    @Permissions(PermissionCode.MEDICATION_CREATE)
     @ApiOperation({summary:'create a new medication'})
     @ApiResponse({status:200, description:'medication created successfully'})
     async create(
@@ -48,7 +48,7 @@ export class MedicationController{
     
     @Get(':id')
     @Roles(RoleEnum.ADMIN,RoleEnum.SUPER_ADMIN, RoleEnum.DOCTOR)
-    @Permissions(PermissionCode.PERMISSION_READ)
+    @Permissions(PermissionCode.MEDICATION_READ)
     @ApiOperation({summary:'fetched this medication'})
     @ApiResponse({status:200, description:'medication fetched successfully'})
     async getOne(
@@ -63,7 +63,7 @@ export class MedicationController{
     
     @Get()
     @Roles(RoleEnum.ADMIN,RoleEnum.SUPER_ADMIN, RoleEnum.DOCTOR)
-    @Permissions(PermissionCode.PERMISSION_READ)
+    @Permissions(PermissionCode.MEDICATION_READ)
     @ApiOperation({summary:'fetch all medications'})
     @ApiResponse({status:200, description:'medication fetched successfully'})
     async getAll(
@@ -77,7 +77,7 @@ export class MedicationController{
 
      @Delete(':id')
      @Roles(RoleEnum.ADMIN,RoleEnum.SUPER_ADMIN, RoleEnum.DOCTOR)
-     @Permissions(PermissionCode.PERMISSION_DELETE)
+     @Permissions(PermissionCode.MEDICATION_DELETE)
      @ApiOperation({summary:'Delete this medication'})
      @ApiResponse({status:200, description:'medication deleted successfully'})
      async delete(

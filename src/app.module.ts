@@ -15,6 +15,7 @@ import { AppoinmentModule } from './appointment/appointment.module';
 import { PrescriptionModule } from './prescription/prescription.module';
 import { NotificationModule } from './notification/notification.module';
 import { MedicationModule } from './medications/medication.module';
+import { ReviewModule } from './reviews/review.module';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { MedicationModule } from './medications/medication.module';
     PrescriptionModule,
     MedicationModule,
     NotificationModule,
+    ReviewModule
 
   ],
   controllers: [AppController],

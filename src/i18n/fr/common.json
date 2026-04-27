@@ -63,11 +63,20 @@
   "PRESCRIPTION_UPDATE": "Ordonnance mise à jour avec succès",
   "PRESCRIPTION_DELETE": "Ordonnance supprimée avec succès",
 
-  "MEDICATION_CREATE": "Ordonnance créée avec succès",
-  "MEDICATION_PATIENT_READ": "Ordonnances du patient récupérées avec succès",
-  "MEDICATION_READ_ONE": "Ordonnance récupérée avec succès",
-  "MEDICATION_READ_ALL": "Ordonnances récupérées avec succès",
-  "MEDICATION_UPDATE": "Ordonnance mise à jour avec succès",
-  "MEDICATION_DELETE": "Ordonnance supprimée avec succès"
+  "MEDICATION_CREATE": "Médicament créé avec succès",
+  "MEDICATION_PATIENT_READ": "Médicaments du patient récupérés avec succès",
+  "MEDICATION_READ_ONE": "Médicament récupéré avec succès",
+  "MEDICATION_READ_ALL": "Tous les médicaments ont été récupérés avec succès",
+  "MEDICATION_UPDATE": "Médicament mis à jour avec succès",
+  "MEDICATION_DELETE": "Médicament supprimé avec succès",
+
+  "REVIEW_CREATE": "Avis créé avec succès",
+  "REVIEW_GET_PATIENT": "Avis du patient récupérés avec succès",
+  "REVIEW_GET_DOCTOR": "Avis du médecin récupérés avec succès",
+  "REVIEW_GET_ONE": "Avis récupéré avec succès",
+  "REVIEW_UPDATE": "Avis mis à jour avec succès",
+  "REVIEW_DELETE": "Avis supprimé avec succès"
+
+
 
 }
