@@ -22,6 +22,9 @@ export class Doctor extends Document{
 
     @Prop()
     country?:string;
+
+     @Prop()
+    password?:string;
     
     @Prop()
     specialization?:string;

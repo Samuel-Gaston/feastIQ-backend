@@ -37,6 +37,15 @@ export class AuthController {
     return { data: response, message };
   }
 
+
+  @Get("profile")
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "Get current user profile" })
+   async getProfile(@Req() req) {
+   return this.authService.getProfile(req.user.sub);
+   }
+
   @Post("refresh")
   @ApiOperation({ summary: "Exchange a refresh token for a new access token" })
   @ApiResponse({ status: 200, description: "token refreshed successfully" })
@@ -53,10 +62,10 @@ export class AuthController {
   @ApiOperation({ summary: "Invalidate the current refresh token" })
   @ApiResponse({ status: 200, description: "logout successful" })
   async logout(@Req() req, @I18n() i18n: I18nContext) {
-    const userId = req.user._id;
-    const response = await this.authService.logout(userId);
-    const message = i18n.t("common.AUTH_LOGOUT");
-    return { data: response, message };
+  const userId = req.user.sub; 
+  const response = await this.authService.logout(userId);
+  const message = i18n.t("common.AUTH_LOGOUT");
+  return { data: response, message };
   }
 
   @Get("verify-email")

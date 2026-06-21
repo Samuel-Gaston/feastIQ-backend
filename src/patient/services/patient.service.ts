@@ -6,11 +6,10 @@ import { Model } from "mongoose";
 import { User } from "../../user/schemas/user.schema";
 import { CreatePatientDTO } from "../dtos/create-patient.dto";
 import { RoleEnum } from "../../common/enums/role.enum";
-import { CodeGenerator } from "../../../utils/code-generator";
 import * as bcrypt from 'bcryptjs'
 import { UpdatePatientDTO } from "../dtos/update-patient.dto";
 import { Doctor } from "../../doctor/schemas/doctor.schema";
-
+import { MailService } from "../../common/mail/mail.service";
 
 @Injectable()
 export class PatientService{
@@ -25,49 +24,57 @@ export class PatientService{
         private readonly userModel: Model<User>,
 
         @InjectModel(Doctor.name)
-        private readonly doctorModel: Model<Doctor>
+        private readonly doctorModel: Model<Doctor>,
+
+         private readonly mailService: MailService,
     ){}
 
 
-    async createPatient(dto: CreatePatientDTO) {
-    const { name, email, address, phone, password } = dto;
+async createPatient(dto: CreatePatientDTO) {
+  const { name, email, address, phone, password } = dto;
 
-    const existingEmail = await this.patientModel.findOne({ email });
-       if (existingEmail) {
-        throw new HttpException("Patient with this email already exists", HttpStatus.CONFLICT);
-    }
+  const existingEmail = await this.patientModel.findOne({ email });
+  if (existingEmail) {
+    throw new HttpException("Patient with this email already exists", HttpStatus.CONFLICT);
+  }
+  if (!password) {
+    throw new HttpException("Password is required", HttpStatus.BAD_REQUEST);
+  }
 
-    const patientRole = await this.roleModel.findOne({ name: RoleEnum.PATIENT });
-    if (!patientRole) {
-        throw new HttpException("Patient role not found",HttpStatus.NOT_FOUND);
-    }
+  const patientRole = await this.roleModel.findOne({ name: RoleEnum.PATIENT });
+  if (!patientRole) {
+    throw new HttpException("Patient role not found", HttpStatus.NOT_FOUND);
+  }
 
-    const generatedPassword = CodeGenerator.generatePassword();
-    const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await this.userModel.create({
-        name,
-        email,
-        password: hashedPassword,
-        isVerified: true,
-        isActive: true,
-        roles: patientRole._id,
-    });
-    await user.save(); 
+  const user = await this.userModel.create({
+    name,
+    email,
+    password: hashedPassword,
+    isVerified: true,
+    isActive: true,
+    roles: patientRole._id,
+  });
 
-    const patient = await this.patientModel.create({
-        name,
-        email,
-        address,
-        phone,
-        user,
-    });
-    await patient.save();
+  const patient = await this.patientModel.create({
+    name,
+    email,
+    address,
+    phone,
+    user: user._id,
+  });
 
-    // Optional: populate the user's roles for response
   await patient.populate({ path: 'user', populate: { path: 'roles' } });
 
-    return patient;
+  await this.mailService.sendPatientWelcomeEmail({
+    to: email!,
+    name: name!,
+    email: email!,
+    password,
+  });
+
+  return patient;
 }
     
 

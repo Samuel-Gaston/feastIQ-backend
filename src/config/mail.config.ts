@@ -30,7 +30,7 @@ export const mailConfig = (configService: ConfigService): MailerOptions => {
           const compiled = Handlebars.compile(template);
           return (context: any) => compiled(context);
         },
-      } as any, // type workaround
+      } as any, 
       options: {
         strict: false,
       },

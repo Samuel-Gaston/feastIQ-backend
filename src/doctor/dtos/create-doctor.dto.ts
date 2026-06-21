@@ -17,6 +17,9 @@ export class CreateDoctorDto{
     @ApiProperty({description:"enter the doctor's address"})
     address?:string;
 
+     @ApiProperty({description:"enter the doctor's address"})
+    password?:string;
+
     @ApiProperty({description:"enter the doctor's country"})
     country?:string;
 

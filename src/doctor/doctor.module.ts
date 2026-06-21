@@ -6,6 +6,7 @@ import { Doctor, DoctorSchema } from "./schemas/doctor.schema";
 import { User, UserSchema } from "../user/schemas/user.schema";
 import { Role, RoleSchema } from "../roles/schemas/role.schema";
 import { Patient, PatientSchema } from "../patient/schemas/patient.schema";
+import { MailModule } from "../common/mail/mail.module";
 
 @Module({
     imports:[
@@ -14,7 +15,7 @@ import { Patient, PatientSchema } from "../patient/schemas/patient.schema";
     {name: User.name, schema:UserSchema},
     {name: Role.name, schema:RoleSchema},
       {name: Patient.name, schema:PatientSchema},
-])
+]), MailModule
     ],
     providers:[DoctorService],
     controllers:[DoctorController],

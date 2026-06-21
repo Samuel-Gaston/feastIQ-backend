@@ -70,20 +70,6 @@ async createUser(dto: CreateUserDto): Promise<User> {
   });
 
   const savedUser = await user.save();
-
-  // Send email with credentials
-  if (savedUser.email && savedUser.name) {
-    try {
-      await this.mailService.sendUserCredentials(
-        savedUser.email,
-        password, // send plain password, not hashed
-        savedUser.name,
-      );
-    } catch (error) {
-      console.error("Error sending email:", error);
-    }
-  }
-
   return savedUser;
 }
 

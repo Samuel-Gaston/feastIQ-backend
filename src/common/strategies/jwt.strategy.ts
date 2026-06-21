@@ -6,7 +6,7 @@ import { Model } from "mongoose";
 import { User } from "../../user/schemas/user.schema";
 
 export interface JwtPayload {
-  sub: string; // userId
+  sub: string; 
 }
 
 @Injectable()
@@ -24,7 +24,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  // ...rest unchanged
 
   async validate(payload: JwtPayload) {
     const user = await this.userModel

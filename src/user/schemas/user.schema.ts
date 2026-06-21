@@ -19,7 +19,7 @@ export class User extends Document{
     @Prop({default:true})
     isVerified?:boolean;
 
-   @Prop({default:false})
+   @Prop({default:true})
    isActive?:boolean;
 
     @Prop({ type: [{ type: Types.ObjectId, ref: 'Permission' }] })

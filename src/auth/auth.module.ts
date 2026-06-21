@@ -13,10 +13,10 @@ import { Role, RoleSchema } from "../roles/schemas/role.schema";
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: "jwt" }),
-    JwtModule.register({
-      secret: process.env.JWT_ACCESS_SECRET,
-      signOptions: { expiresIn: "15m" },
-    }),
+  JwtModule.register({
+  secret: process.env.JWT_ACCESS_SECRET as string,  
+  signOptions: { expiresIn: "15m" },
+}),
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: Patient.name, schema: PatientSchema },

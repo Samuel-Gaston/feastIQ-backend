@@ -16,6 +16,7 @@ import { PrescriptionModule } from './prescription/prescription.module';
 import { NotificationModule } from './notification/notification.module';
 import { MedicationModule } from './medications/medication.module';
 import { ReviewModule } from './reviews/review.module';
+import { MailModule } from './common/mail/mail.module';
 
 @Module({
   imports: [
@@ -58,7 +59,8 @@ import { ReviewModule } from './reviews/review.module';
     PrescriptionModule,
     MedicationModule,
     NotificationModule,
-    ReviewModule
+    ReviewModule,
+    MailModule
 
   ],
   controllers: [AppController],

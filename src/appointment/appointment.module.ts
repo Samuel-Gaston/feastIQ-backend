@@ -8,7 +8,7 @@ import { Patient, PatientSchema } from "../patient/schemas/patient.schema";
 import { PatientService } from "../patient/services/patient.service";
 import { User, UserSchema } from "../user/schemas/user.schema";
 import { Doctor, DoctorSchema } from "../doctor/schemas/doctor.schema";
-
+import { MailModule } from "../common/mail/mail.module";
 
 
 @Module({
@@ -19,7 +19,7 @@ import { Doctor, DoctorSchema } from "../doctor/schemas/doctor.schema";
         { name: User.name, schema: UserSchema },           
       { name: Role.name, schema: RoleSchema },
        { name: Doctor.name, schema: DoctorSchema },
-     ])
+     ]), MailModule
     ],
     controllers:[AppointmentController],
     providers:[AppointmentService, PatientService],
