@@ -49,6 +49,15 @@
   "USER_DELETE": "Utilisateur supprimé avec succès",
   "USER_ACTIVATE": "Utilisateur activé avec succès",
 
+  "AUTH_REGISTER": "Inscription réussie",
+  "AUTH_LOGIN": "Connexion réussie",
+  "AUTH_DOCTOR_REGISTERED": "Compte médecin créé et identifiants envoyés avec succès",
+  "AUTH_TOKEN_REFRESHED": "Jeton actualisé avec succès",
+  "AUTH_LOGOUT": "Déconnexion réussie",
+  "AUTH_EMAIL_VERIFIED": "Adresse e-mail vérifiée avec succès",
+  "AUTH_FORGOT_PASSWORD_SENT": "Si cet e-mail existe, un lien de réinitialisation a été envoyé",
+  "AUTH_PASSWORD_RESET": "Mot de passe réinitialisé avec succès",
+
   "APPOINTMENT_CREATED": "Rendez-vous créé avec succès",
   "DOCTOR_APPOINTMENTS_FETCHED": "Rendez-vous du médecin récupérés avec succès",
   "APPOINTMENTS_FETCHED": "Rendez-vous récupérés avec succès",

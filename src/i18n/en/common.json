@@ -49,6 +49,15 @@
   "USER_DELETE": "User deleted successfully",
   "USER_ACTIVATE": "User activated successfully",
 
+  "AUTH_REGISTER": "Registration successful",
+  "AUTH_LOGIN": "Login successful",
+  "AUTH_DOCTOR_REGISTERED": "Doctor account created and credentials issued successfully",
+  "AUTH_TOKEN_REFRESHED": "Token refreshed successfully",
+  "AUTH_LOGOUT": "Logged out successfully",
+  "AUTH_EMAIL_VERIFIED": "Email verified successfully",
+  "AUTH_FORGOT_PASSWORD_SENT": "If that email exists, a reset link has been sent",
+  "AUTH_PASSWORD_RESET": "Password reset successfully",
+
   "APPOINTMENT_CREATED": "Appointment created successfully",
   "DOCTOR_APPOINTMENTS_FETCHED": "Doctor appointments retrieved successfully",
   "APPOINTMENTS_FETCHED": "Appointments retrieved successfully",

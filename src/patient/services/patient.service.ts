@@ -30,7 +30,7 @@ export class PatientService{
 
 
     async createPatient(dto: CreatePatientDTO) {
-    const { name, email, address, phone } = dto;
+    const { name, email, address, phone, password } = dto;
 
     const existingEmail = await this.patientModel.findOne({ email });
        if (existingEmail) {
@@ -110,6 +110,7 @@ export class PatientService{
         }
     }
 
+    
       async findPatientProfile(_id: string): Promise<Patient> {
        const patient = await this.patientModel
       .findOne({ user: _id })

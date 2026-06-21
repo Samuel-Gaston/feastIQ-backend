@@ -5,7 +5,6 @@ import { User } from "../../user/schemas/user.schema";
 import { Doctor } from "../../doctor/schemas/doctor.schema";
 
 
-
 @Schema({timestamps:true})
 export class Patient extends Document{
   @Prop()

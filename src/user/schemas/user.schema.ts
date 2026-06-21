@@ -34,6 +34,9 @@ export class User extends Document{
     @Prop({ type: Types.ObjectId, ref: 'Patient' })
     patients?: Patient;
 
+    @Prop() 
+    refreshTokenHash?: string;
+
     
 
 }

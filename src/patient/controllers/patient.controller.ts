@@ -12,7 +12,6 @@ import { CurrentUser } from "../../common/decorators/current-user.decorator";
 import { User } from "../../user/schemas/user.schema";
 
 
-
 @ApiTags('Patients')
 @ApiResponse({status:404, description:'NOT FOUND'})
 @ApiResponse({ status: 400, description: "BAD_REQUEST" })

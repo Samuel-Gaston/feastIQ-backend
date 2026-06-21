@@ -19,8 +19,8 @@ export class CreatePatientDTO{
      @Prop({minlength:2, maxlength:50})
     phone?:string;
 
-      @ApiPropertyOptional({description:'enter password'})
-     @Prop({minlength:2, maxlength:50})
+    @ApiPropertyOptional({description:'enter password'})
+    @Prop({minlength:2, maxlength:50})
     address?:string;
 
 
