@@ -41,8 +41,7 @@ export class Doctor extends Document{
     @Prop({ type: Types.ObjectId, ref: 'Patient' })
     patient?: Patient[];
 
-    // @Prop({ type: [{ type: Types.ObjectId, ref: 'Permission' }] })
-    // permissions?: Permission[];
+    
 
 }
 

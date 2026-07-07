@@ -12,10 +12,12 @@ import { MailService } from '../../common/mail/mail.service';
 import { CreatePatientDTO } from '../../patient/dtos/create-patient.dto';
 import { LoginDto } from '../dtos/login.dto';
 import { ForgotPasswordDto, ResetPasswordDto } from '../dtos/reset-password.dto';
+import { Logger } from '@nestjs/common';
 import { JwtSignOptions } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectModel(Patient.name) private readonly patientModel: Model<Patient>,
@@ -25,26 +27,42 @@ export class AuthService {
     private readonly mailService: MailService,
   ) {}
 
-private generateAccessToken(user: User & { _id: Types.ObjectId }, roleName?: string): string {
+  private generateAccessToken(user: User & { _id: Types.ObjectId }, roleName?: string): string {
   const payload = {
     sub: user._id.toString(),
     email: user.email ?? '',
     role: roleName ?? 'PATIENT',
   };
 
-  return this.jwtService.sign(payload);
+  // 👈 Explicitly pass the secret directly here to guarantee token signing values!
+  return this.jwtService.sign(payload, {
+    secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+    expiresIn: '15m',
+  });
 }
 
+
+
+// ... inside your class
 private generateRefreshToken(user: User & { _id: Types.ObjectId }): string {
   const payload = {
     sub: user._id.toString(),
-    email: user.email,
+    email: user.email ?? '',
   };
-  return this.jwtService.sign(payload, {
-    secret: this.configService.get<string>('JWT_REFRESH_SECRET') as string,
-    expiresIn: (this.configService.get<string>('JWT_REFRESH_EXPIRY') || '7d') as any,
-  });
+  
+  const secret = this.configService.get<string>('JWT_REFRESH_SECRET')!;
+  
+  // Cast the config result to 'any' to bypass the strict index.d.ts validation
+  const expiresIn = (this.configService.get<string>('JWT_REFRESH_EXPIRY') || '7d') as any;
+
+  const signOptions: JwtSignOptions = {
+    secret,
+    expiresIn,
+  };
+
+  return this.jwtService.sign(payload, signOptions);
 }
+
 
 private generateResetToken(userId: string, email: string): string {
   const payload = { sub: userId, email };
@@ -123,53 +141,55 @@ private generateResetToken(userId: string, email: string): string {
   }
 
  
-  async login(dto: LoginDto) {
-    const { email, password } = dto;
+async login(dto: LoginDto) {
+  const { email, password } = dto;
 
-    const user = await this.userModel.findOne({ email }).populate('roles');
-    if (!user) {
-      throw new UnauthorizedException('Invalid email or password');
-    }
-
-    if (!user.isActive) {
-      throw new UnauthorizedException('Your account has been deactivated');
-    }
-
-    if (!user.isVerified) {
-      throw new UnauthorizedException('Please verify your account first');
-    }
-
-    if (!user.password) {
-      throw new UnauthorizedException('Invalid email or password');
-    }
-
-    const isPasswordValid = await bcrypt.compare(password!, user.password);
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid email or password');
-    }
-
-    const roleName = (user.roles as any)?.name;
-
-    const accessToken = this.generateAccessToken(user as any, roleName);
-    const refreshToken = this.generateRefreshToken(user as any);
-
-    // Store a hash of the refresh token so logout can revoke it
-    const refreshTokenHash = await bcrypt.hash(refreshToken, 10);
-    await this.userModel.findByIdAndUpdate(user._id, { refreshTokenHash });
-
-    return {
-      accessToken,
-      refreshToken,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: roleName,
-        isVerified: user.isVerified,
-        isActive: user.isActive,
-      },
-    };
+  const user = await this.userModel.findOne({ email }).populate('roles');
+  
+  // LOGGING: Helps pinpoint exactly which condition fails
+  if (!user) {
+    this.logger.warn(`Login failed: No user found for ${email}`);
+    throw new UnauthorizedException('Invalid email or password');
   }
+
+  if (!user.isActive) {
+    this.logger.warn(`Login failed: Account inactive ${email}`);
+    throw new UnauthorizedException('Your account has been deactivated');
+  }
+
+  if (!user.isVerified) {
+    this.logger.warn(`Login failed: Account not verified ${email}`);
+    throw new UnauthorizedException('Please verify your account first');
+  }
+
+  // Use the same hashing library consistently (recommend switching all to 'bcrypt')
+  const isPasswordValid = await bcrypt.compare(password!, user.password!);
+  if (!isPasswordValid) {
+    this.logger.warn(`Login failed: Password mismatch for ${email}`);
+    throw new UnauthorizedException('Invalid email or password');
+  }
+
+  const roleName = (user.roles as any)?.name;
+  const accessToken = this.generateAccessToken(user as any, roleName);
+  const refreshToken = this.generateRefreshToken(user as any);
+
+  // Use the same bcrypt library for the refresh hash
+  const refreshTokenHash = await bcrypt.hash(refreshToken, 10);
+  await this.userModel.findByIdAndUpdate(user._id, { refreshTokenHash });
+
+  return {
+    accessToken,
+    refreshToken,
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: roleName,
+      isVerified: user.isVerified,
+      isActive: user.isActive,
+    },
+  };
+}
 
  
   async refreshToken(token: string) {

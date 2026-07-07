@@ -17,7 +17,7 @@ import { NotificationModule } from './notification/notification.module';
 import { MedicationModule } from './medications/medication.module';
 import { ReviewModule } from './reviews/review.module';
 import { MailModule } from './common/mail/mail.module';
-
+import {AdminModule} from './admin/admin.module';
 @Module({
   imports: [
        // Load .env globally
@@ -60,7 +60,8 @@ import { MailModule } from './common/mail/mail.module';
     MedicationModule,
     NotificationModule,
     ReviewModule,
-    MailModule
+    MailModule,
+    AdminModule,
 
   ],
   controllers: [AppController],

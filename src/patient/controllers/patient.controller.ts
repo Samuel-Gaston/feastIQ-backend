@@ -27,7 +27,7 @@ export class PatientController{
    ){}
 
    @Post()
-   @Roles(RoleEnum.PATIENT)
+   @Roles(RoleEnum.ADMIN, RoleEnum.DOCTOR)
    @Permissions(PermissionCode.PATIENT_CREATE)
    @ApiOperation({summary:"create a patient"})
    @ApiResponse({status:200, description:"patient created successfully"})
@@ -41,7 +41,7 @@ export class PatientController{
    }
 
    @Get()
-   @Roles(RoleEnum.PATIENT)
+   @Roles(RoleEnum.ADMIN, RoleEnum.DOCTOR)
    @Permissions(PermissionCode.PATIENT_READ)
    @ApiOperation({summary:"fetch all patients"})
    @ApiResponse({status:200, description:"patients fetched successfully"})
@@ -54,7 +54,7 @@ export class PatientController{
    }
 
    @Get(':id')
-   @Roles(RoleEnum.PATIENT)
+   @Roles(RoleEnum.ADMIN, RoleEnum.DOCTOR, RoleEnum.PATIENT)
    @Permissions(PermissionCode.PATIENT_READ_ONE)
    @ApiOperation({summary:"fetch one patient by Id"})
    @ApiResponse({status:200, description:"patient fetched successfully"})
@@ -68,7 +68,7 @@ export class PatientController{
    }
 
    @Patch(':id')
-   @Roles(RoleEnum.PATIENT)
+   @Roles(RoleEnum.ADMIN)
    @Permissions(PermissionCode.PATIENT_UPDATE)
    @ApiOperation({summary:"updated a patient"})
    @ApiResponse({status:200, description:"patient updated successfully"})
@@ -83,7 +83,7 @@ export class PatientController{
    }
 
    @Delete(':id')
-   @Roles(RoleEnum.PATIENT)
+   @Roles(RoleEnum.ADMIN)
    @Permissions(PermissionCode.PATIENT_DELETE)
    @ApiOperation({summary:"delete a patient"})
    @ApiResponse({status:200, description:"patient deleted successfully"})
@@ -97,6 +97,7 @@ export class PatientController{
    }
 
    @Get('me/patient-profile')
+   @Roles(RoleEnum.ADMIN, RoleEnum.DOCTOR, RoleEnum.PATIENT)
    @ApiOperation({summary:'find a patient profile'})
     @ApiResponse({status:200, description:'doctor profile found successfully'})
    async findMyPatientProfile(
