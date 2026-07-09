@@ -10,7 +10,7 @@ import { User } from "../../user/schemas/user.schema";
 import { UpdateDoctorDto } from "../dtos/update-doctor.dto";
 import { Patient } from "../../patient/schemas/patient.schema";
 import { MailService } from "../../common/mail/mail.service";
-
+import { NotificationService } from "../../notification/services/notification.service";
 @Injectable()
 export class DoctorService{
     constructor(
@@ -27,6 +27,8 @@ export class DoctorService{
         private readonly patientModel: Model<Patient>,
 
           private readonly mailService: MailService, 
+
+          private readonly notificationService: NotificationService,
     ){}
 
 
@@ -81,10 +83,17 @@ export class DoctorService{
       to: email!,
       name: name!,
       email: email!,
-      password, // ← plaintext, BEFORE hashing — this is the only place it's ever sent
+      password, 
       licenseNumber,
       specialization,
     });
+
+   await this.notificationService.saveNotification({
+  title: "New Doctor Registered",
+  message: `A new doctor, ${dto.name}, has been added to the system.`,
+  roles: [RoleEnum.ADMIN], // Change to 'roles' and pass as an array
+  userId: undefined,            
+});
 
     return doctor;
   }

@@ -79,13 +79,13 @@ async createPatient(dto: CreatePatientDTO) {
     
 
      async getAllPatients(): Promise<Patient[]>{
-        const Patients = await this.patientModel.find().populate({path:'user'}).populate({path:'role'});
+        const Patients = await this.patientModel.find().populate({path:'user'}).populate({path:'role'}).populate('doctor', 'name');
         return Patients;
     }
         
         
     async getPatientById(id:string): Promise<Patient>{
-        const Patient = await this.patientModel.findById(id).populate({path:'user'}).populate({path:'role'});
+        const Patient = await this.patientModel.findById(id).populate({path:'user'}).populate({path:'role'}).populate('doctor', 'name');
         if(!Patient){
             throw new HttpException("Patient not found", HttpStatus.NOT_FOUND)
         }

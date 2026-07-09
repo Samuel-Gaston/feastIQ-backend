@@ -27,7 +27,7 @@ export class ReviewController{
 
     
     @Post()
-    @Roles(RoleEnum.ADMIN,RoleEnum.SUPER_ADMIN, RoleEnum.DOCTOR, RoleEnum.PATIENT)
+    @Roles(RoleEnum.DOCTOR, RoleEnum.PATIENT)
     @Permissions(PermissionCode.REVIEW_READ)
     @ApiOperation({summary:'create a review'})
     @ApiResponse({status:200, description:'review created successfully'})
@@ -71,19 +71,6 @@ export class ReviewController{
     }
 
 
-    @Get(':id')
-    @Roles(RoleEnum.ADMIN,RoleEnum.SUPER_ADMIN)
-    @Permissions(PermissionCode.REVIEW_READ)
-    @ApiOperation({summary:'get a review'})
-    @ApiResponse({status:200, description:'review fetched successfully'})
-    async getOne(
-    @Param('id') id: string,
-    @I18n() i18n: I18nContext
-    ){
-     const response = await this.reviewService.getReviewsByDoctor(id)
-    const message = i18n.t("common.REVIEW_GET_ONE")
-    return {data: response, message}
-    }
 
 
     @Delete(':id')
@@ -100,20 +87,20 @@ export class ReviewController{
     return {data: response, message}
     }
 
-    @Patch(':id')
-    @Roles(RoleEnum.ADMIN,RoleEnum.SUPER_ADMIN)
-    @Permissions(PermissionCode.REVIEW_READ)
-    @ApiOperation({summary:'update a review'})
-    @ApiResponse({status:200, description:'review updated successfully'})
-    async updated(
-    @Body() dto: CreateReviewDTO,
-    @Param('id') id: string,
-    @I18n() i18n: I18nContext
-    ) {
-    const response = await this.reviewService.updateReview(id, dto)
-    const message = i18n.t("common.REVIEW_UPDATE")
-    return {data: response, message}
-    }
+
+
+@Get()
+@Roles(RoleEnum.ADMIN, RoleEnum.SUPER_ADMIN)
+@Permissions(PermissionCode.REVIEW_READ)
+@ApiOperation({ summary: 'Get all reviews for admin dashboard' })
+@ApiResponse({ status: 200, description: 'Reviews fetched successfully' })
+async getAllReviews(@I18n() i18n: I18nContext) {
+  const response = await this.reviewService.getAllReviews();
+  const message = i18n.t("common.REVIEWS_FETCHED");
+  return { data: response, message };
+}
+
+   
 
 
 }

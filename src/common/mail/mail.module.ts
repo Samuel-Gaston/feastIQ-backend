@@ -8,20 +8,23 @@ import { MailService } from './mail.service';
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        transport: {
-          host: config.get<string>('MAIL_HOST'),
-          port: config.get<number>('MAIL_PORT'),
-          secure: false, // true for port 465, false for 587
-          auth: {
-            user: config.get<string>('MAIL_USER'),
-            pass: config.get<string>('MAIL_PASSWORD'),
-          },
-        },
-        defaults: {
-          from: config.get<string>('MAIL_FROM'),
-        },
-      }),
+     // mail.module.ts
+useFactory: (config: ConfigService) => ({
+  transport: {
+    host: config.get<string>('MAIL_HOST'),
+    port: config.get<number>('MAIL_PORT'),
+    // If port is 465, secure MUST be true. 
+    // If you want secure: false, change port to 587.
+    secure: config.get<number>('MAIL_PORT') === 587, 
+    auth: {
+      user: config.get<string>('MAIL_USER'),
+      pass: config.get<string>('MAIL_PASSWORD'), // Matches .env key
+    },
+  },
+  defaults: {
+    from: config.get<string>('MAIL_FROM'),
+  },
+}),
     }),
   ],
   providers: [MailService],

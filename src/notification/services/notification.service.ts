@@ -14,15 +14,14 @@ export class NotificationService {
     private readonly i18n: I18nService,
   ) {}
 
- 
 
   async getNotificationsForUser(user: User): Promise<Notification[]> {
     return this.notificationModel
       .find({
         $or: [
           { userId: user._id },
-          { roles: { $in: [user['role']] } },
-          { roles: null, userId: null }, // global notifications
+          { role: { $in: [user['role']] } },
+          { role: null, userId: null }, // global notifications
         ],
       })
       .sort({ createdAt: -1 });
@@ -73,20 +72,23 @@ async saveNotification(dto: CreateNotificationDto): Promise<Notification> {
 
  
 
-  async deleteNotification(id: string, userId?: string): Promise<void> {
-    const filter: any = { _id: id };
-    if (userId) filter.userId = userId;
-
-    const notification = await this.notificationModel.findOne(filter);
-    if (!notification) {
-      throw new HttpException(
-        this.i18n.t('common.NOTIFICATION_NOT_FOUND'),
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
-    await this.notificationModel.findByIdAndDelete(id);
+async deleteNotification(id: string, userId?: string): Promise<void> {
+  // 1. Find the notification first to verify existence
+  const notification = await this.notificationModel.findById(id);
+  
+  if (!notification) {
+    throw new HttpException('Notification not found', HttpStatus.NOT_FOUND);
   }
+
+  // 2. Permission check: 
+  // If userId exists (non-admin), check if the notification belongs to this user 
+  // OR if it's a global notification (userId: null)
+  if (userId && notification.userId && notification.userId.toString() !== userId) {
+    throw new HttpException('Forbidden: You do not own this notification', HttpStatus.FORBIDDEN);
+  }
+
+  await this.notificationModel.findByIdAndDelete(id);
+}
 
  
 

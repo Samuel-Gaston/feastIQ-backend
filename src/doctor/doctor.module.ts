@@ -7,7 +7,7 @@ import { User, UserSchema } from "../user/schemas/user.schema";
 import { Role, RoleSchema } from "../roles/schemas/role.schema";
 import { Patient, PatientSchema } from "../patient/schemas/patient.schema";
 import { MailModule } from "../common/mail/mail.module";
-
+import { NotificationModule } from "../notification/notification.module";
 @Module({
     imports:[
      MongooseModule.forFeature([
@@ -15,7 +15,7 @@ import { MailModule } from "../common/mail/mail.module";
     {name: User.name, schema:UserSchema},
     {name: Role.name, schema:RoleSchema},
       {name: Patient.name, schema:PatientSchema},
-]), MailModule
+]), MailModule, NotificationModule
     ],
     providers:[DoctorService],
     controllers:[DoctorController],
