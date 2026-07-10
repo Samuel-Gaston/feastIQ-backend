@@ -23,7 +23,7 @@ import { MailModule } from "../common/mail/mail.module";
     ],
     controllers:[AppointmentController],
     providers:[AppointmentService, PatientService],
-    exports:[AppointmentService, PatientService]
+    exports: [AppointmentService, PatientService, MongooseModule]
 })
 
 export class AppoinmentModule{}

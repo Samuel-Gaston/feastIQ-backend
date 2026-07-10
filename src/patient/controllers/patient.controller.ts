@@ -1,4 +1,4 @@
-import { Body, Post,Get, Param, Patch, Delete, Controller, Req} from "@nestjs/common";
+import { Body, Post,Get, Param, Patch, Delete, Controller, Req, UseGuards} from "@nestjs/common";
 import { PatientService } from "../services/patient.service";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CreatePatientDTO } from "../dtos/create-patient.dto";
@@ -10,8 +10,10 @@ import { PermissionCode } from "../../common/enums/permission.enum";
 import { UpdatePatientDTO } from "../dtos/update-patient.dto";
 import { CurrentUser } from "../../common/decorators/current-user.decorator";
 import { User } from "../../user/schemas/user.schema";
+import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { RolesGuard } from "../../common/guards/role.guard";
 
-
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('Patients')
 @ApiResponse({status:404, description:'NOT FOUND'})
 @ApiResponse({ status: 400, description: "BAD_REQUEST" })
@@ -135,6 +137,7 @@ export class PatientController{
       const message = i18n.t("common.PATIENT_ASSIGN_TO_DOCTOR")
       return {data:response, message}
    }
+
 
   
 

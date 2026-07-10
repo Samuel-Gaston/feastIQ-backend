@@ -1,6 +1,6 @@
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { AppointmentService } from "../services/appointment.service";
-import { Body, Controller, Delete, Get, Param, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { Roles } from "../../common/decorators/role.decorator";
 import { Permissions } from "../../common/decorators/permission.decorator";
 import { RoleEnum } from "../../common/enums/role.enum";
@@ -9,18 +9,22 @@ import { CreateAppointmentDTO } from "../dtos/create-appointment.dto";
 import { I18n, I18nContext } from "nestjs-i18n";
 import { User } from "../../user/schemas/user.schema";
 import { CurrentUser } from "../../common/decorators/current-user.decorator";
+import { AppointmentStatus } from "../../common/enums/appointment-status.enum";
+import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { RolesGuard } from "../../common/guards/role.guard";
 
 
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('Appointments')
-
 @Controller('appointments')
 export class AppointmentController{
     constructor(
         private readonly appoinmentservice: AppointmentService
     ){}
 
+    
     @Post()
-    @Roles(RoleEnum.ADMIN, RoleEnum.DOCTOR)
+    @Roles(RoleEnum.ADMIN, RoleEnum.DOCTOR, RoleEnum.PATIENT)
     @Permissions(PermissionCode.APPOINTMENT_CREATE)
     @ApiOperation({summary:'Create a new appointment'})
     @ApiResponse({status:201, description:'The appointment has been successfully created.'})
@@ -35,7 +39,7 @@ export class AppointmentController{
     }
 
     @Get('doctor/:doctorId')
-    @Roles(RoleEnum.ADMIN, RoleEnum.DOCTOR)
+    @Roles(RoleEnum.ADMIN, RoleEnum.DOCTOR, )
     @Permissions(PermissionCode.APPOINTMENT_READ)
     @ApiOperation({summary:'Get all appointments for a specific doctor'})
     @ApiResponse({status:200, description:'List of appointments for the specified doctor.'})
@@ -103,5 +107,15 @@ export class AppointmentController{
         const message = i18n.t("common.APPOINTMENT_DELETED")
         return {data:response, message}
     }
+
+    @Patch(':id/status')
+@Roles(RoleEnum.DOCTOR)
+@Permissions(PermissionCode.APPOINTMENT_UPDATE)
+async updateAppointmentStatus(
+    @Param('id') id: string,
+    @Body() body: { status: AppointmentStatus; reason?: string; newScheduledAt?: Date }
+) {
+    return await this.appoinmentservice.updateStatus(id, body);
+}
 
 }

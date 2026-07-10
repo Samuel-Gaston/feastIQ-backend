@@ -18,6 +18,7 @@ import { MedicationModule } from './medications/medication.module';
 import { ReviewModule } from './reviews/review.module';
 import { MailModule } from './common/mail/mail.module';
 import {AdminModule} from './admin/admin.module';
+import {ConsultationModule} from './consultation/consultation.module';
 @Module({
   imports: [
        // Load .env globally
@@ -56,6 +57,7 @@ import {AdminModule} from './admin/admin.module';
     PatientModule,
     DoctorModule,
     AppoinmentModule,
+    ConsultationModule,
     PrescriptionModule,
     MedicationModule,
     NotificationModule,

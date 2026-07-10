@@ -142,34 +142,43 @@ export class DoctorService{
     }
 
 
-   // GET PROFILE (DOCTOR ONLY)
-    async findDoctorProfile(id: string): Promise<Doctor> {
-    const user = await this.doctorModel
-    .findById(id)
-    .populate({path:'permissions'})
-    .populate({path:'doctor'})
-    .populate({path:'role'});
+async findDoctorProfile(userId: string): Promise<Doctor> {
+  const doctor = await this.doctorModel
+    .findOne({ user: new Types.ObjectId(userId) })
+    .populate('user') // Only populate fields that actually exist in your schema
+    .populate('roles'); // Check if your field is 'roles' or 'role'
 
-    if (!user) {
-    throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    }
-
-    return user;
+  if (!doctor) {
+    throw new HttpException('Doctor profile not found', HttpStatus.NOT_FOUND);
+  }
+  return doctor;
 }
 
-    // UPDATE DOCTOR PROFILE (DOCTOR ONLY)
-    async updateDoctorProfile(id: string, dto: UpdateDoctorDto): Promise<Doctor> {
-    const doctor = await this.doctorModel.findById(id);
-    if (!doctor) {
-       throw new HttpException('Doctor not found', HttpStatus.NOT_FOUND);
-    }
+async updateDoctorProfile(userId: string, dto: UpdateDoctorDto): Promise<Doctor> {
+  const updateData: any = { ...dto };
 
-    const updated = await this.doctorModel.findByIdAndUpdate(id, dto, { new: true });
-    if (!updated) {
-       throw new HttpException('Failed to update', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    return updated;
-     }
+  // Only handle password if it is in the DTO
+  if (dto.password && dto.password.trim() !== "") {
+    const salt = await bcrypt.genSalt(10);
+    updateData.password = await bcrypt.hash(dto.password, salt);
+  } else {
+    // Prevent overwriting the existing password with 'undefined' 
+    // if the user is just updating their name or email
+    delete updateData.password;
+  }
+
+  const updated = await this.doctorModel.findOneAndUpdate(
+    { user: new Types.ObjectId(userId) },
+    { $set: updateData }, 
+    { new: true, upsert: false } // upsert: false ensures we only update existing records
+  );
+
+  if (!updated) {
+    throw new HttpException('Failed to update profile', HttpStatus.NOT_FOUND);
+  }
+
+  return updated;
+}
 
 
 async getPatientLinkedToDoctor(doctorId: string): Promise<Patient[]> {
@@ -180,6 +189,24 @@ async getPatientLinkedToDoctor(doctorId: string): Promise<Patient[]> {
 
   const patients = await this.patientModel
     .find({ doctor: new Types.ObjectId(doctorId) })
+    .populate({ path: 'doctor' });
+
+  return patients;
+}
+
+
+// Inside DoctorService class
+
+async getMyPatients(userId: string): Promise<Patient[]> {
+  // 1. Find the doctor record linked to this specific user ID
+  const doctor = await this.doctorModel.findOne({ user: new Types.ObjectId(userId) });
+  
+  if (!doctor) {
+    throw new HttpException('Doctor profile not found for this user', HttpStatus.NOT_FOUND);
+  }
+
+  const patients = await this.patientModel
+    .find({ doctor: doctor._id })
     .populate({ path: 'doctor' });
 
   return patients;

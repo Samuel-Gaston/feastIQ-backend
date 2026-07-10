@@ -3,3 +3,4 @@ export enum ConsultationType{
     Chat = 'Chat',
     Home_Visit = 'Home_Visit'
 }
+

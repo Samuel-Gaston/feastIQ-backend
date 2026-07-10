@@ -1,39 +1,44 @@
-import { SchemaFactory, Schema } from "@nestjs/mongoose";
+import { SchemaFactory, Schema, Prop } from "@nestjs/mongoose";
 import { Document, Types } from "mongoose";
-import { Prop } from "@nestjs/mongoose";
 import { AppointmentStatus } from "../../common/enums/appointment-status.enum";
 import { ConsultationType } from "../../common/enums/consultation-type.enum";
 import { Patient } from "../../patient/schemas/patient.schema";
 import { Doctor } from "../../doctor/schemas/doctor.schema";
 
+@Schema({ timestamps: true })
+export class Appointment extends Document {
 
+    @Prop({ type: Types.ObjectId, ref: 'Patient', required: true })
+    patient?: Patient;
 
-@Schema()
-export class Appointment extends Document{
+    @Prop({ type: Types.ObjectId, ref: 'Doctor', required: true })
+    doctor?: Doctor;
 
-    @Prop({type: Types.ObjectId, ref:'Patient'})
-    patient?:Patient;
-
-    @Prop({type: Types.ObjectId, ref:'Doctor'})
-    doctor?:Doctor;
-
-    @Prop()
+    @Prop({ required: true })
     scheduledAt?: Date;
 
-    @Prop()
+    @Prop({ 
+        type: String, 
+        enum: Object.values(AppointmentStatus), 
+        default: AppointmentStatus.Pending 
+    })
     status?: AppointmentStatus;
 
-    @Prop()
+    
+    @Prop({ type: String })
+    statusReason?: string;
+
+    @Prop({ type: Date })
+    proposedTime?: Date;
+
+    @Prop({ type: String, enum: Object.values(ConsultationType) })
     consultationType?: ConsultationType;
 
     @Prop()
-    reason?:string;
+    reason?: string;
 
     @Prop()
-    notes?:string;
-
-
+    notes?: string;
 }
 
-
-export const AppointmentSchema = SchemaFactory.createForClass(Appointment)
+export const AppointmentSchema = SchemaFactory.createForClass(Appointment);

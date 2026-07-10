@@ -23,7 +23,7 @@ export class Doctor extends Document{
     @Prop()
     country?:string;
 
-     @Prop()
+     @Prop({ required: false })
     password?:string;
     
     @Prop()
@@ -36,7 +36,7 @@ export class Doctor extends Document{
     user?: User; 
 
     @Prop({ type: Types.ObjectId, ref: 'Role' })
-    role?:Role;
+    roles?:Role;
 
     @Prop({ type: Types.ObjectId, ref: 'Patient' })
     patient?: Patient[];

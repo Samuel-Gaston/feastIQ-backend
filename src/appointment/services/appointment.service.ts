@@ -89,6 +89,7 @@ const { scheduledAt, status, consultationType, reason, notes } = dto;
      }
 
 
+
      async deleteAppointment(id:string): Promise<Appointment>{
           const existAppointment = await this.appointmentModel.findById(id)
          if(!existAppointment){
@@ -100,5 +101,31 @@ const { scheduledAt, status, consultationType, reason, notes } = dto;
             } 
             return appointment;
      }
+
+     async updateStatus(
+  id: string, 
+  updateData: { status: AppointmentStatus; reason?: string; newScheduledAt?: Date }
+): Promise<Appointment> {
+  const updatePayload: any = {
+    status: updateData.status,
+  };
+  if (updateData.reason) {
+    updatePayload.statusReason = updateData.reason;
+  }
+  
+  if (updateData.newScheduledAt) {
+    updatePayload.scheduledAt = updateData.newScheduledAt;
+  }
+  const updatedAppointment = await this.appointmentModel.findByIdAndUpdate(
+    id,
+    { $set: updatePayload },
+    { new: true } 
+  );
+  if (!updatedAppointment) {
+    throw new HttpException('Appointment not found', HttpStatus.NOT_FOUND);
+  }
+
+  return updatedAppointment;
+}
 
  }

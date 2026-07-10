@@ -1,4 +1,4 @@
-import { Body, Post,Get, Param, Patch, Delete, Controller} from "@nestjs/common";
+import { Body, Post,Get, Param, Patch, Delete, Controller, UseGuards} from "@nestjs/common";
 import { DoctorService } from "../services/doctor.service";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CreateDoctorDto } from "../dtos/create-doctor.dto";
@@ -11,9 +11,12 @@ import { UpdateDoctorDto } from "../dtos/update-doctor.dto";
 import { UserService } from "../../user/services/user.service";
 import { CurrentUser } from "../../common/decorators/current-user.decorator";
 import { User } from "../../user/schemas/user.schema";
+import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { RolesGuard } from "../../common/guards/role.guard";
 
 
 
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('Doctors')
 @ApiResponse({status:404, description:'NOT FOUND'})
 @ApiResponse({ status: 400, description: "BAD_REQUEST" })
@@ -55,6 +58,49 @@ export class DoctorController{
     const message = i18n.t("common.DOCTOR_READ")
     return {data:response, message}
    }
+
+
+    @Get('me/doctor-profile')
+    @Roles(RoleEnum.DOCTOR)
+     @ApiOperation({summary:'find a doctor profile'})
+     @ApiResponse({status:200, description:'doctor profile found successfully'})
+     async findDoctorProfile(
+    @CurrentUser() user: User,
+    @I18n() i18n:I18nContext,
+     ){
+     const response = await this.doctorservice.findDoctorProfile(user._id.toString())
+    const message = i18n.t("common.READ_DOCTOR_PROFILE")
+    return {data:response, message}
+     }
+
+     @Patch('me/update/doctor-profile')
+     @Roles(RoleEnum.DOCTOR)
+     @ApiOperation({summary:"update profile information"})
+     @ApiResponse({status:200, description:'profile information updated successfully'})
+     async updateProfile(
+      @CurrentUser() user: User,
+      @Body() dto:UpdateDoctorDto,
+      @I18n() i18n:I18nContext,
+     ){
+      const response = await this.doctorservice.updateDoctorProfile(user._id.toString(), dto)
+      const message = i18n.t("common.UPDATED_DOCTOR_PROFILE")
+      return {data:response, message}
+     }
+
+     @Get('me/patients')
+@Roles(RoleEnum.DOCTOR)
+@ApiOperation({ summary: "Fetch all patients linked to the currently logged-in doctor" })
+@ApiResponse({ status: 200, description: "Patients fetched successfully" })
+async getMyPatients(
+  @CurrentUser() user: User,
+  @I18n() i18n: I18nContext,
+) {
+  // Assuming the user document stores the _id of the corresponding doctor document 
+  // or we need to find the doctor profile linked to this user
+  const response = await this.doctorservice.getMyPatients(user._id.toString());
+  const message = i18n.t("common.PATIENT_LINKED_TO_DOCTOR");
+  return { data: response, message };
+}
 
    @Get(':id')
    @Roles(RoleEnum.ADMIN)
@@ -99,32 +145,6 @@ export class DoctorController{
     return {data:response, message}
    }
 
-    @Get('me/doctor-profile')
-     @ApiOperation({summary:'find a doctor profile'})
-     @ApiResponse({status:200, description:'doctor profile found successfully'})
-     async findDoctorProfile(
-    @CurrentUser() user: User,
-    @I18n() i18n:I18nContext,
-     ){
-     const response = await this.doctorservice.findDoctorProfile(user._id.toString())
-    const message = i18n.t("common.READ_DOCTOR_PROFILE")
-    return {data:response, message}
-     }
-
-     @Patch('me/doctor-profile')
-     @ApiOperation({summary:"update profile information"})
-     @ApiResponse({status:200, description:'profile information updated successfully'})
-     async updateProfile(
-      @CurrentUser() user: User,
-      @Body() dto:UpdateDoctorDto,
-      @I18n() i18n:I18nContext,
-     ){
-      const response = await this.doctorservice.updateDoctorProfile(user._id.toString(), dto)
-      const message = i18n.t("common.UPDATED_DOCTOR_PROFILE")
-      return {data:response, message}
-     }
-
-
      @Get(':id/patients')
      @Roles(RoleEnum.DOCTOR)
      @Permissions(PermissionCode.READ_DOCTOR_ASSIGN_TO_PATIENT)
@@ -138,5 +158,8 @@ export class DoctorController{
       const message = i18n.t("common.PATIENT_LINKED_TO_DOCTOR")
       return {data:response, message}
      }
+
+    
+
 
 }
