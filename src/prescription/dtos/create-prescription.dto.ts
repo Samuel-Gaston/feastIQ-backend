@@ -17,12 +17,6 @@ export class CreatePrescriptionDTO {
   @IsMongoId()
   appointment?: string;
 
- 
-  @ApiPropertyOptional({ description: 'Enter medication ids (array)' })
-  @IsOptional()
-  @IsArray()
-  @IsMongoId({ each: true })
-  medications?: string[];
 
   @ApiPropertyOptional({ description: 'Dosage instructions or pharmacist notes' })
   @IsOptional()
@@ -41,11 +35,6 @@ export class CreatePrescriptionDTO {
 }
 
 export class UpdatePrescriptionDTO {
-  @ApiPropertyOptional({ description: 'Update medication ids (array)' })
-  @IsOptional()
-  @IsArray()
-  @IsMongoId({ each: true })
-  medications?: string[];
 
   @ApiPropertyOptional({ description: 'Update dosage instructions or notes' })
   @IsOptional()

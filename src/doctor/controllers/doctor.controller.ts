@@ -87,6 +87,7 @@ export class DoctorController{
       return {data:response, message}
      }
 
+
      @Get('me/patients')
 @Roles(RoleEnum.DOCTOR)
 @ApiOperation({ summary: "Fetch all patients linked to the currently logged-in doctor" })
@@ -95,8 +96,6 @@ async getMyPatients(
   @CurrentUser() user: User,
   @I18n() i18n: I18nContext,
 ) {
-  // Assuming the user document stores the _id of the corresponding doctor document 
-  // or we need to find the doctor profile linked to this user
   const response = await this.doctorservice.getMyPatients(user._id.toString());
   const message = i18n.t("common.PATIENT_LINKED_TO_DOCTOR");
   return { data: response, message };

@@ -17,9 +17,6 @@ export class Prescription extends Document {
   appointment?: Appointment;
 
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'Medication' }], default: [] })
-  medications?: Medication[];
-
   @Prop()
   notes?: string; 
 

@@ -15,7 +15,7 @@ import { AppoinmentModule } from './appointment/appointment.module';
 import { PrescriptionModule } from './prescription/prescription.module';
 import { NotificationModule } from './notification/notification.module';
 import { MedicationModule } from './medications/medication.module';
-// import { ReviewModule } from './reviews/review.module';
+import { ReviewModule } from './reviews/review.module';
 import { MailModule } from './common/mail/mail.module';
 import {AdminModule} from './admin/admin.module';
 import {ConsultationModule} from './consultation/consultation.module';
@@ -61,7 +61,7 @@ import {ConsultationModule} from './consultation/consultation.module';
     PrescriptionModule,
     MedicationModule,
     NotificationModule,
-    // ReviewModule,
+    ReviewModule,
     MailModule,
     AdminModule,
 

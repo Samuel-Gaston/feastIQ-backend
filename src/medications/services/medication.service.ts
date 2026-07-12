@@ -1,95 +1,140 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Medication } from "../schemas/medication.schema";
-import { Model } from "mongoose";
 import { Prescription } from "../../prescription/schemas/prescriptions.schema";
-import { CreateMedicationDTO } from "../dtos/create-medication.dto";
-
-
-
-
+import { Model, Types } from "mongoose";
+import { CreateMedicationDTO, UpdateMedicationDTO } from "../dtos/create-medication.dto";
 
 @Injectable()
-export class MedicationService{
-    constructor(
-        @InjectModel(Medication.name)
-        private readonly medicationModel: Model<Medication>,
+export class MedicationService {
+  constructor(
+    @InjectModel(Medication.name)
+    private readonly medicationModel: Model<Medication>,
+    @InjectModel(Prescription.name)
+    private readonly prescriptionModel: Model<Prescription>,
+  ) {}
 
-        @InjectModel(Prescription.name)
-        private readonly prescriptionModel: Model<Prescription>
-    ){}
+  // ─── Create a medication under a prescription ──────────────────
+  async createMedication(dto: CreateMedicationDTO): Promise<Medication> {
+    const { prescription, name, dosage, instruction, frequency, startDate, endDate, schedule, duration } = dto;
 
-
-    async createMedication(dto: CreateMedicationDTO): Promise<Medication>{
-     const {name, dosage, instruction, frequency, startDate, endDate, schedule, duration} = dto;
-
-
-     const existPrescription = await this.prescriptionModel.findById(dto.prescription)
-     if(!existPrescription){
-         throw new HttpException("Prescription not found for this medication", HttpStatus.NOT_FOUND)
-     }
-
-     const medication = await this.medicationModel.create({
-        prescription: existPrescription._id,
-        name,
-        dosage,
-        instruction,
-        frequency,
-        duration,
-        startDate, 
-        endDate,
-        schedule
-     })
-
-     return medication;
-
+    if (!name) {
+      throw new HttpException("Medication name is required", HttpStatus.BAD_REQUEST);
     }
 
-
-    async getAllMedication():Promise<Medication[]>{
-        const medication = await this.medicationModel.find().populate({path:'prescription'})
-        if(!medication){
-            throw new HttpException("Medications not found", HttpStatus.NOT_FOUND)
-        }
-        return medication;
+    const existPrescription = await this.prescriptionModel.findById(prescription);
+    if (!existPrescription) {
+      throw new NotFoundException("Prescription not found — create a prescription first before adding medications");
     }
 
+    const medication = await this.medicationModel.create({
+      prescription: new Types.ObjectId(prescription),
+      name,
+      dosage,
+      instruction,
+      frequency,
+      duration,
+      startDate,
+      endDate,
+      schedule,
+    });
 
-    async getMedication(id:string): Promise<Medication>{
-     const medication = await this.medicationModel.findById(id)
-     if(!medication){
-        throw new HttpException("this is medication can not be found", HttpStatus.NOT_FOUND)
-     }
-        return medication;
-    }
+    // Populate prescription with patient and doctor so frontend has full context
+    await medication.populate({
+      path: 'prescription',
+      populate: [
+        { path: 'patient', select: 'name email phone' },
+        { path: 'doctor', select: 'name email specialization' },
+      ],
+    });
 
+    return medication;
+  }
 
-    async deleteMedication(id:string): Promise<void>{
-        const existMedication = await this.medicationModel.findById(id)
-         if(!existMedication){
-            throw new HttpException("Medication not found", HttpStatus.NOT_FOUND)
-         }
-        const medication = await this.medicationModel.findByIdAndDelete(id)
-        if(!medication){
-            throw new HttpException("Failed to delete medication", HttpStatus.INTERNAL_SERVER_ERROR)
-        }
-    }
+  // ─── Get all medications for a specific prescription ──────────
+  async getMedicationsByPrescription(prescriptionId: string): Promise<Medication[]> {
+    const existPrescription = await this.prescriptionModel.findById(prescriptionId);
+    if (!existPrescription) throw new NotFoundException("Prescription not found");
 
+    return this.medicationModel
+      .find({ prescription: new Types.ObjectId(prescriptionId) })
+      .populate({
+        path: 'prescription',
+        populate: [
+          { path: 'patient', select: 'name email phone' },
+          { path: 'doctor', select: 'name email specialization' },
+        ],
+      })
+      .sort({ createdAt: -1 });
+  }
 
-    async updateMedication(id:string, dto:CreateMedicationDTO): Promise<Medication>{
-        const existMedication = await this.medicationModel.findById(id)
-        if(!existMedication){
-            throw new HttpException("Medication not found", HttpStatus.NOT_FOUND)
-        }
-        const medication = await this.medicationModel.findByIdAndUpdate(id, dto, {new:true})
-        if(!medication){
-            throw new HttpException("Failed to update medication", HttpStatus.INTERNAL_SERVER_ERROR)
-        }
+  // ─── Get all medications (admin/doctor view) ──────────────────
+  async getAllMedication(): Promise<Medication[]> {
+    return this.medicationModel
+      .find()
+      .populate({
+        path: 'prescription',
+        populate: [
+          { path: 'patient', select: 'name email' },
+          { path: 'doctor', select: 'name email specialization' },
+        ],
+      })
+      .sort({ createdAt: -1 });
+  }
 
-        return medication;
-    }
+  // ─── Get single medication ─────────────────────────────────────
+  async getMedication(id: string): Promise<Medication> {
+    const medication = await this.medicationModel
+      .findById(id)
+      .populate({
+        path: 'prescription',
+        populate: [
+          { path: 'patient', select: 'name email phone' },
+          { path: 'doctor', select: 'name email specialization' },
+          { path: 'appointment', select: 'scheduledAt consultationType reason' },
+        ],
+      });
 
+    if (!medication) throw new NotFoundException("Medication not found");
+    return medication;
+  }
 
+  // ─── Update medication ─────────────────────────────────────────
+  async updateMedication(id: string, dto: UpdateMedicationDTO): Promise<Medication> {
+    const existMedication = await this.medicationModel.findById(id);
+    if (!existMedication) throw new NotFoundException("Medication not found");
 
+    const updateData: any = {};
+    if (dto.name)        updateData.name = dto.name;
+    if (dto.dosage)      updateData.dosage = dto.dosage;
+    if (dto.frequency)   updateData.frequency = dto.frequency;
+    if (dto.schedule)    updateData.schedule = dto.schedule;
+    if (dto.duration)    updateData.duration = dto.duration;
+    if (dto.instruction) updateData.instruction = dto.instruction;
+    if (dto.startDate)   updateData.startDate = dto.startDate;
+    if (dto.endDate)     updateData.endDate = dto.endDate;
 
+    const updated = await this.medicationModel
+      .findByIdAndUpdate(id, updateData, { new: true })
+      .populate({
+        path: 'prescription',
+        populate: [
+          { path: 'patient', select: 'name email' },
+          { path: 'doctor', select: 'name email specialization' },
+        ],
+      });
+
+    if (!updated) throw new HttpException("Failed to update medication", HttpStatus.INTERNAL_SERVER_ERROR);
+    return updated;
+  }
+
+  // ─── Delete medication ─────────────────────────────────────────
+  async deleteMedication(id: string): Promise<Medication> {
+    const existMedication = await this.medicationModel.findById(id);
+    if (!existMedication) throw new NotFoundException("Medication not found");
+
+    const deleted = await this.medicationModel.findByIdAndDelete(id);
+    if (!deleted) throw new HttpException("Failed to delete medication", HttpStatus.INTERNAL_SERVER_ERROR);
+    return deleted;
+  }
 }

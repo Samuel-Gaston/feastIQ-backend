@@ -99,10 +99,9 @@ export class DoctorService{
   }
 
 
-
     // ADMIN ONLY
     async getAllDoctors(): Promise<Doctor[]>{
-        const doctors = await this.doctorModel.find().populate({path:'user'}).populate({path:'role'});
+        const doctors = await this.doctorModel.find().populate({path:'user'}).populate({path:'roles'});
         return doctors;
     }
 
@@ -145,8 +144,8 @@ export class DoctorService{
 async findDoctorProfile(userId: string): Promise<Doctor> {
   const doctor = await this.doctorModel
     .findOne({ user: new Types.ObjectId(userId) })
-    .populate('user') // Only populate fields that actually exist in your schema
-    .populate('roles'); // Check if your field is 'roles' or 'role'
+    .populate('user') 
+    .populate('roles'); 
 
   if (!doctor) {
     throw new HttpException('Doctor profile not found', HttpStatus.NOT_FOUND);
