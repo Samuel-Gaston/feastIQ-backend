@@ -4,6 +4,7 @@ import { AppointmentStatus } from "../../common/enums/appointment-status.enum";
 import { ConsultationType } from "../../common/enums/consultation-type.enum";
 import { Patient } from "../../patient/schemas/patient.schema";
 import { Doctor } from "../../doctor/schemas/doctor.schema";
+import {Consultation} from "../../consultation/schema/consultation.schema";
 
 @Schema({ timestamps: true })
 export class Appointment extends Document {
@@ -20,7 +21,7 @@ export class Appointment extends Document {
     @Prop({ 
         type: String, 
         enum: Object.values(AppointmentStatus), 
-        default: AppointmentStatus.Pending 
+        default: AppointmentStatus.PENDING 
     })
     status?: AppointmentStatus;
 
@@ -39,6 +40,13 @@ export class Appointment extends Document {
 
     @Prop()
     notes?: string;
+
+    @Prop({ type: Date })
+completedAt?: Date;   // set when doctor marks COMPLETED — useful for reports
+
+
+@Prop({ type: Types.ObjectId, ref: 'Consultation' })
+consultation?: Consultation;
 }
 
 export const AppointmentSchema = SchemaFactory.createForClass(Appointment);

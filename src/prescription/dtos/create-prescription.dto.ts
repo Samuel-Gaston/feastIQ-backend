@@ -1,32 +1,59 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsNotEmpty, IsOptional, IsString, IsArray, IsMongoId, IsDateString } from "class-validator";
 
+export class CreatePrescriptionDTO {
+  @ApiProperty({ description: 'Enter the patient id' })
+  @IsNotEmpty()
+  @IsMongoId()
+  patient?: string;
 
-export class CreatePrescriptionDTO{
+  @ApiProperty({ description: 'Enter the doctor id' })
+  @IsNotEmpty()
+  @IsMongoId()
+  doctor?: string;
 
-    @ApiProperty({description:'enter the patient id'})
-    @IsNotEmpty()
-    patient?:string;
+  @ApiPropertyOptional({ description: 'Enter appointment id' })
+  @IsOptional()
+  @IsMongoId()
+  appointment?: string;
 
-    @ApiProperty({description:'enter the doctor id'})
-    @IsNotEmpty()
-    doctor?:string;
+ 
+  @ApiPropertyOptional({ description: 'Enter medication ids (array)' })
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
+  medications?: string[];
 
-    @ApiProperty({description:'enter appointment id'})
-    @IsNotEmpty()
-    appointment?:string;
+  @ApiPropertyOptional({ description: 'Dosage instructions or pharmacist notes' })
+  @IsOptional()
+  @IsString()
+  notes?: string;
 
-    @ApiProperty({description:'enter medications id'})
-    @IsNotEmpty()
-    medication?:string;
+  @ApiProperty({ description: 'Enter issued date' })
+  @IsNotEmpty()
+  @IsDateString()
+  issuedAt?: Date;
 
-    @ApiProperty({description:'enter issued date'})
-    @IsNotEmpty()
-    issuedAt?:Date
+  @ApiPropertyOptional({ description: 'Enter expires date' })
+  @IsOptional()
+  @IsDateString()
+  expiresAt?: Date;
+}
 
-    @ApiProperty({description:'enter expires date'})
-    @IsNotEmpty()
-    expiresAt?:Date;
+export class UpdatePrescriptionDTO {
+  @ApiPropertyOptional({ description: 'Update medication ids (array)' })
+  @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
+  medications?: string[];
 
+  @ApiPropertyOptional({ description: 'Update dosage instructions or notes' })
+  @IsOptional()
+  @IsString()
+  notes?: string;
 
+  @ApiPropertyOptional({ description: 'Update expires date' })
+  @IsOptional()
+  @IsDateString()
+  expiresAt?: Date;
 }

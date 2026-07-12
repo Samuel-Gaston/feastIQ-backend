@@ -1,28 +1,63 @@
-import { Controller, Post, Get, Body, Param, UseGuards } from "@nestjs/common";
+import { Controller, Post, Get, Body, Param, UseGuards, Req } from "@nestjs/common";
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { ConsultationService } from "../service/consultation.service";
 import { CreateConsultationDTO } from "../dtos/create-consultation.dto";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { RolesGuard } from "../../common/guards/role.guard";
 import { Roles } from "../../common/decorators/role.decorator";
 import { RoleEnum } from "../../common/enums/role.enum";
-import { CurrentUser } from "../../common/decorators/current-user.decorator";
-import { ApiTags } from "@nestjs/swagger";
 
 @ApiTags('Consultations')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('consultations')
 export class ConsultationController {
   constructor(private readonly consultationService: ConsultationService) {}
 
+  // ─── DOCTOR: Create a consultation ────────────────────────────────
   @Post()
   @Roles(RoleEnum.DOCTOR)
-  async create(@CurrentUser() user: any, @Body() dto: CreateConsultationDTO) {
-    return await this.consultationService.create(user.doctorProfileId, dto);
+  @ApiOperation({ summary: 'Doctor creates a consultation after an appointment' })
+  @ApiResponse({ status: 201, description: 'Consultation created successfully' })
+  async create(@Req() req: any, @Body() dto: CreateConsultationDTO) {
+    // FIXED: pass req.user._id (User._id from JWT), not a non-existent doctorProfileId
+    const response = await this.consultationService.create(req.user._id, dto);
+    return { data: response, message: 'Consultation created successfully' };
   }
 
+  // ─── DOCTOR: Get all my own consultations ─────────────────────────
+  @Get('my')
+  @Roles(RoleEnum.DOCTOR)
+  @ApiOperation({ summary: 'Get all consultations for the logged-in doctor' })
+  async getMyConsultations(@Req() req: any) {
+    const response = await this.consultationService.getDoctorConsultations(req.user._id);
+    return { data: response, message: 'Consultations fetched successfully' };
+  }
+
+  // ─── ADMIN: Get all consultations ────────────────────────────────
+  @Get()
+  @Roles(RoleEnum.ADMIN)
+  @ApiOperation({ summary: 'Admin gets all consultations' })
+  async getAll() {
+    const response = await this.consultationService.getAll();
+    return { data: response, message: 'Consultations fetched successfully' };
+  }
+
+  // ─── DOCTOR/ADMIN: Get one consultation ──────────────────────────
+  @Get(':id')
+  @Roles(RoleEnum.DOCTOR, RoleEnum.ADMIN)
+  @ApiOperation({ summary: 'Get a single consultation by ID' })
+  async getOne(@Param('id') id: string) {
+    const response = await this.consultationService.getOne(id);
+    return { data: response, message: 'Consultation fetched successfully' };
+  }
+
+  // ─── DOCTOR/ADMIN: Get patient consultation history ───────────────
   @Get('patient/:patientId')
   @Roles(RoleEnum.DOCTOR, RoleEnum.ADMIN)
+  @ApiOperation({ summary: 'Get full consultation history for a patient' })
   async getPatientHistory(@Param('patientId') patientId: string) {
-    return await this.consultationService.getPatientHistory(patientId);
+    const response = await this.consultationService.getPatientHistory(patientId);
+    return { data: response, message: 'Patient history fetched successfully' };
   }
 }

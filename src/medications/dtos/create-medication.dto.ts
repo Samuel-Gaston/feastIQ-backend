@@ -1,7 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 
-
 export class CreateMedicationDTO{
     @ApiProperty({description:'the name of the medication'})
     prescription?:string;

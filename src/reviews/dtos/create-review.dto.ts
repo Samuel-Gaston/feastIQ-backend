@@ -1,18 +1,12 @@
-import { ApiProperty } from "@nestjs/swagger";
+// import { ApiProperty } from "@nestjs/swagger";
 
 
+// export class CreateReviewDTO {
+//   @ApiProperty({ example: 5 })
+//   rating?: number;
 
-export class CreateReviewDTO{
-    @ApiProperty({description:'enter the patient id'})
-    patient?:string;
-
-    @ApiProperty({description:'enter the doctor id'})
-    doctor?:string;
-
-    @ApiProperty({description:'enter the rating'})
-    rating?:string;
-
-    @ApiProperty({description:'enter the comment'})
-    comment?:string;
-
-}
+//   @ApiProperty({
+//     example: "The platform is very easy to use."
+//   })
+//   comment?: string;
+// }

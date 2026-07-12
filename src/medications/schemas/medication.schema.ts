@@ -3,7 +3,6 @@ import { Document, Types } from "mongoose";
 import { Prescription } from "../../prescription/schemas/prescriptions.schema";
 
 
-
 @Schema({timestamps:true})
 export class Medication extends Document{
     @Prop({type: Types.ObjectId, ref:'Prescription'})

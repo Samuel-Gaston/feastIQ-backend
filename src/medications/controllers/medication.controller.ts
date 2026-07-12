@@ -8,13 +8,14 @@ import { Permissions } from "../../common/decorators/permission.decorator";
 import { PermissionCode } from "../../common/enums/permission.enum";
 import { CreateMedicationDTO } from "../dtos/create-medication.dto";
 import { I18n, I18nContext } from "nestjs-i18n";
-
-
+import { UseGuards } from "@nestjs/common";
+import {JwtAuthGuard} from "../../common/guards/jwt-auth.guard";
 
 
 
 
 @ApiTags('Medications')
+@UseGuards(JwtAuthGuard)
 @ApiResponse({status:404, description:'NOT FOUND'})
 @ApiResponse({ status: 400, description: "BAD_REQUEST" })
 @ApiResponse({ status: 401, description: "UNAUTHORIZED" })
