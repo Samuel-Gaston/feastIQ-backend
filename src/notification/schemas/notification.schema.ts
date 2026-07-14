@@ -4,6 +4,7 @@ import { Document, Types } from "mongoose";
 import { Prop, Schema } from "@nestjs/mongoose";
 import { SchemaFactory } from "@nestjs/mongoose";
 
+
 @Schema({ timestamps: true })
 export class Notification extends Document {
   @Prop()

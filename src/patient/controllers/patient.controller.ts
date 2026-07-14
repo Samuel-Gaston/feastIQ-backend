@@ -1,4 +1,4 @@
-import { Body, Post,Get, Param, Patch, Delete, Controller, Req, UseGuards} from "@nestjs/common";
+import { Body, Post,Get, Param, Patch, Delete, Controller, Req, UseGuards, HttpException, HttpStatus} from "@nestjs/common";
 import { PatientService } from "../services/patient.service";
 import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CreatePatientDTO } from "../dtos/create-patient.dto";
@@ -55,6 +55,35 @@ export class PatientController{
     return {data:response, message}
    }
 
+     @Get('me/patient-profile')
+   @Roles(RoleEnum.ADMIN, RoleEnum.PATIENT)
+   @ApiOperation({summary:'find a patient profile'})
+    @ApiResponse({status:200, description:'patient profile found successfully'})
+   async findMyPatientProfile(
+      @CurrentUser() user: User, 
+     @I18n() i18n: I18nContext,
+    ) {
+     
+     if (!user || !user._id) {
+       throw new HttpException('Current user not found in request', HttpStatus.UNAUTHORIZED);
+     }
+   const response = await this.patientservice.findPatientProfile(user._id.toString());
+   const message = i18n.t("common.READ_PATIENT_PROFILE");
+   return { data: response, message };
+   }
+
+   @Patch('me/patient-profile')
+    @Roles(RoleEnum.PATIENT, RoleEnum.ADMIN)
+   async updateMyPatientProfile(
+   @CurrentUser() user: User,
+   @Body() dto:UpdatePatientDTO,
+   @I18n() i18n:I18nContext
+   ){
+      const response = await this.patientservice.updatePatientProfile(user._id.toString(), dto)
+      const message = i18n.t("common.UPDATE_PATIENT_PROFILE")
+      return {data:response, message}
+   }
+
    @Get(':id')
    @Roles(RoleEnum.ADMIN, RoleEnum.DOCTOR, RoleEnum.PATIENT)
    @Permissions(PermissionCode.PATIENT_READ_ONE)
@@ -79,7 +108,7 @@ export class PatientController{
     @I18n() i18n:I18nContext,
     @Body() dto:CreatePatientDTO
    ){
-    const response = await this.patientservice.updatedPatient(id, dto)
+    const response = await this.patientservice.updatePatient(id, dto)
     const message = i18n.t("common.PATIENT_UPDATE")
     return {data:response, message}
    }
@@ -98,30 +127,9 @@ export class PatientController{
     return {data:response, message}
    }
 
-   @Get('me/patient-profile')
-   @Roles(RoleEnum.ADMIN, RoleEnum.DOCTOR, RoleEnum.PATIENT)
-   @ApiOperation({summary:'find a patient profile'})
-    @ApiResponse({status:200, description:'doctor profile found successfully'})
-   async findMyPatientProfile(
-   @Req() req,
-   @I18n() i18n: I18nContext,
-    ) {
-   const userId = req.user._id;
-   const response = await this.patientservice.findPatientProfile(userId);
-   const message = i18n.t("common.READ_PATIENT_PROFILE");
-   return { data: response, message };
-   }
 
-   @Patch('me/patient-profile')
-   async updateMyPatientProfile(
-   @CurrentUser() user: User,
-   @Body() dto:UpdatePatientDTO,
-   @I18n() i18n:I18nContext
-   ){
-      const response = await this.patientservice.updatePatientProfile(user._id.toString(), dto)
-      const message = i18n.t("common.UPDATE_PATIENT_PROFILE")
-      return {data:response, message}
-   }
+
+
 
    @Post('link-patient-to-doctor/:patientId/:doctorId')
    @Roles(RoleEnum.ADMIN)

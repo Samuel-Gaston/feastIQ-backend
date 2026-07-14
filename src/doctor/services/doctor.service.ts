@@ -11,6 +11,9 @@ import { UpdateDoctorDto } from "../dtos/update-doctor.dto";
 import { Patient } from "../../patient/schemas/patient.schema";
 import { MailService } from "../../common/mail/mail.service";
 import { NotificationService } from "../../notification/services/notification.service";
+import { InjectConnection } from '@nestjs/mongoose';
+import {  Connection } from 'mongoose';
+
 @Injectable()
 export class DoctorService{
     constructor(
@@ -29,6 +32,8 @@ export class DoctorService{
           private readonly mailService: MailService, 
 
           private readonly notificationService: NotificationService,
+
+          @InjectConnection() private connection: Connection,
     ){}
 
 
@@ -99,6 +104,7 @@ export class DoctorService{
   }
 
 
+
     // ADMIN ONLY
     async getAllDoctors(): Promise<Doctor[]>{
         const doctors = await this.doctorModel.find().populate({path:'user'}).populate({path:'roles'});
@@ -143,7 +149,7 @@ export class DoctorService{
 
 async findDoctorProfile(userId: string): Promise<Doctor> {
   const doctor = await this.doctorModel
-    .findOne({ user: new Types.ObjectId(userId) })
+    .findOne({ user: new Types.ObjectId(userId) }) 
     .populate('user') 
     .populate('roles'); 
 
@@ -153,30 +159,34 @@ async findDoctorProfile(userId: string): Promise<Doctor> {
   return doctor;
 }
 
-async updateDoctorProfile(userId: string, dto: UpdateDoctorDto): Promise<Doctor> {
-  const updateData: any = { ...dto };
 
-  // Only handle password if it is in the DTO
-  if (dto.password && dto.password.trim() !== "") {
-    const salt = await bcrypt.genSalt(10);
-    updateData.password = await bcrypt.hash(dto.password, salt);
-  } else {
-    // Prevent overwriting the existing password with 'undefined' 
-    // if the user is just updating their name or email
-    delete updateData.password;
+async updateDoctorProfile(id: string, dto: any): Promise<Doctor | null> {
+  // 1. Find the Doctor and ensure they exist
+  const existDoctor = await this.doctorModel.findOne({ user: new Types.ObjectId(id) });
+  if (!existDoctor) throw new HttpException('Doctor not found', HttpStatus.NOT_FOUND);
+
+  // 2. Update the User collection (Source of Truth)
+  const userUpdateData: any = {};
+  if (dto.name) userUpdateData.name = dto.name;
+  if (dto.email) userUpdateData.email = dto.email;
+  if (dto.password) userUpdateData.password = await bcrypt.hash(dto.password, 10);
+
+  if (Object.keys(userUpdateData).length > 0) {
+    await this.userModel.findByIdAndUpdate(id, userUpdateData);
   }
 
-  const updated = await this.doctorModel.findOneAndUpdate(
-    { user: new Types.ObjectId(userId) },
-    { $set: updateData }, 
-    { new: true, upsert: false } // upsert: false ensures we only update existing records
-  );
+  // 3. Update the Doctor collection
+  // Instead of deleting the email, we actively include it so the collections match.
+  const doctorUpdateData = { ...dto };
+  delete doctorUpdateData.password; // Security: Never update password in Doctor collection
 
-  if (!updated) {
-    throw new HttpException('Failed to update profile', HttpStatus.NOT_FOUND);
-  }
+  const doctor = await this.doctorModel.findByIdAndUpdate(
+    existDoctor._id,
+    doctorUpdateData,
+    { new: true }
+  ).populate({ path: 'user', populate: { path: 'roles' } });
 
-  return updated;
+  return doctor ? (doctor.toObject() as Doctor) : null;
 }
 
 

@@ -9,11 +9,13 @@ import {
 import { Reflector } from '@nestjs/core';
 import { RoleEnum } from '../enums/role.enum';
 
+
 @Injectable()
 export class RolesGuard implements CanActivate {
     constructor(private reflector: Reflector) {}
 
- canActivate(context: ExecutionContext): boolean {
+// roles.guard.ts
+canActivate(context: ExecutionContext): boolean {
     const requiredRoles = this.reflector.getAllAndOverride<string[]>('roles', [
         context.getHandler(),
         context.getClass(),
@@ -22,18 +24,22 @@ export class RolesGuard implements CanActivate {
     if (!requiredRoles) return true;
 
     const request = context.switchToHttp().getRequest();
-    const user = request.user; // This is the object returned by JwtStrategy.validate()
+    const user = request.user; 
 
     if (!user) throw new ForbiddenException('User not found');
     
-    // Check if user.role exists and is an array (based on your JwtStrategy)
+    // In JwtStrategy, you set 'role: user.roles'
+    // If user.roles is an array of objects [ { name: 'DOCTOR', ... }, ... ]
     const userRoles = Array.isArray(user.role) ? user.role : [user.role];
 
-    // Check if any of the user's roles match the required roles
-    // Note: Assuming user.role objects have a 'name' property
-    const hasRole = userRoles.some((role) => 
-        requiredRoles.includes(role.name) || role.name === RoleEnum.SUPER_ADMIN
-    );
+    // Debugging: uncomment the line below to see what structure you are actually getting
+    // console.log("User Roles from Strategy:", userRoles);
+
+    const hasRole = userRoles.some((role) => {
+        // Handle cases where role might be an ID string vs an object with a 'name' property
+        const roleName = typeof role === 'object' && role !== null ? role.name : role;
+        return requiredRoles.includes(roleName) || roleName === RoleEnum.SUPER_ADMIN;
+    });
 
     if (!hasRole) {
         throw new ForbiddenException('You do not have the required role');

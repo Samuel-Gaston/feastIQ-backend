@@ -10,6 +10,9 @@ import { RoleEnum } from '../../common/enums/role.enum';
 import { Roles } from '../../common/decorators/role.decorator';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { CreateNotificationDto } from '../dtos/create-notification.dto';
+import { Body } from '@nestjs/common';
+import { Post } from '@nestjs/common';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('Notifications')
@@ -18,6 +21,22 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) { }
 
+@Post('send-targeted')
+  @Roles(RoleEnum.ADMIN, RoleEnum.SUPER_ADMIN, RoleEnum.DOCTOR)
+  @ApiOperation({ summary: 'Admin can send a notification to a specific user' })
+  async sendNotificationToUser(
+    @Body() dto: CreateNotificationDto,
+    @I18n() i18n: I18nContext,
+  ) {
+    if (!dto.userId) {
+      throw new HttpException('userId is required for targeted notifications', HttpStatus.BAD_REQUEST);
+    }
+    
+    const response = await this.notificationService.saveNotification(dto);
+    const message = i18n.t('common.NOTIFICATION_SENT');
+    
+    return { data: response, message };
+  }
 
   @Get()
   async getMyNotifications(
@@ -73,6 +92,7 @@ async deleteNotification(@Param('id') id: string, @CurrentUser() user: User) {
   return { data: response };
 }
 
+
 @Delete()
 async deleteAllNotifications(@CurrentUser() user: User) {
   if (!user || !user._id) {
@@ -82,6 +102,8 @@ async deleteAllNotifications(@CurrentUser() user: User) {
   await this.notificationService.deleteAllNotifications(user._id.toString());
   return { message: 'All notifications deleted' };
 }
+
+
 
   }
 

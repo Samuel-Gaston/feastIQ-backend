@@ -103,4 +103,15 @@ async deleteNotification(id: string, userId?: string): Promise<void> {
       isRead: false,
     });
   }
+
+
+  async createTargetedNotification(userId: string | Types.ObjectId, title: string, message: string) {
+  // Use 'userId' to match your Schema definition
+  return await this.notificationModel.create({
+    userId: new Types.ObjectId(userId), 
+    title,
+    message,
+    isRead: false,
+  });
+}
 }

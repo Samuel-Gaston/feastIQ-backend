@@ -7,7 +7,7 @@ import { PatientController } from "./controllers/patient.controller";
 import { PatientService } from "./services/patient.service";
 import {Doctor, DoctorSchema } from "../doctor/schemas/doctor.schema";
 import { MailModule } from "../common/mail/mail.module";
-
+import { NotificationModule } from "../notification/notification.module";
 
 
 
@@ -20,7 +20,7 @@ import { MailModule } from "../common/mail/mail.module";
         {name: User.name, schema:UserSchema},
         {name: Doctor.name, schema:DoctorSchema}
        ]) ,
-  MailModule   ],
+  MailModule, NotificationModule  ],
     providers:[PatientService],
     controllers:[PatientController],
     exports:[PatientService]

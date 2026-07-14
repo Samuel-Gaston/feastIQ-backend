@@ -10,6 +10,8 @@ import * as bcrypt from 'bcryptjs'
 import { UpdatePatientDTO } from "../dtos/update-patient.dto";
 import { Doctor } from "../../doctor/schemas/doctor.schema";
 import { MailService } from "../../common/mail/mail.service";
+import {Types} from "mongoose"
+import { NotificationService } from "../../notification/services/notification.service";
 
 @Injectable()
 export class PatientService{
@@ -27,6 +29,7 @@ export class PatientService{
         private readonly doctorModel: Model<Doctor>,
 
          private readonly mailService: MailService,
+         private readonly notificationService: NotificationService
     ){}
 
 
@@ -91,19 +94,41 @@ async createPatient(dto: CreatePatientDTO) {
         }
         return Patient;
     }
-        
+  
 
-    async updatedPatient(id:string, dto:CreatePatientDTO): Promise<Patient>{
-           const existPatient = await this.patientModel.findById(id)
-        if(!existPatient){
-            throw new HttpException("Patient not found", HttpStatus.NOT_FOUND)
-        }
-    const Patient = await this.patientModel.findByIdAndUpdate(id, dto, {new:true})
-    if(!Patient){
-        throw new HttpException("failed to updated", HttpStatus.INTERNAL_SERVER_ERROR)
-    }
-    return Patient;
-    }
+    
+async updatePatient(id: string, dto: any): Promise<Patient> {
+  const existPatient = await this.patientModel.findById(id);
+  if (!existPatient) {
+    throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
+  }
+ 
+  const updateData: any = {};
+  if (dto.name)    updateData.name = dto.name;
+  if (dto.email)   updateData.email = dto.email;
+  if (dto.phone)   updateData.phone = dto.phone;
+  if (dto.address) updateData.address = dto.address;
+ 
+  const patient = await this.patientModel.findByIdAndUpdate(
+    id, updateData, { new: true }
+  ).populate({ path: 'user', populate: { path: 'roles' } });
+ 
+  if (!patient) {
+    throw new HttpException('Failed to update patient', HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+ 
+  // STEP 2: Sync User — use the patient's linked user._id
+  const userUpdateData: any = {};
+  if (dto.name)  userUpdateData.name = dto.name;
+  if (dto.email) userUpdateData.email = dto.email;
+ 
+  if (Object.keys(userUpdateData).length > 0 && existPatient.user) {
+    await this.userModel.findByIdAndUpdate(existPatient.user.toString(), userUpdateData);
+  }
+ 
+  return patient;
+}
+
 
         
     async deletePatient(id:string): Promise<void>{
@@ -118,10 +143,11 @@ async createPatient(dto: CreatePatientDTO) {
     }
 
     
-      async findPatientProfile(_id: string): Promise<Patient> {
+      async findPatientProfile(userId: string): Promise<Patient> {
        const patient = await this.patientModel
-      .findOne({ user: _id })
-      .populate({ path: 'user', populate: { path: 'roles' } });
+      .findOne({ user: new Types.ObjectId(userId) })
+       .populate('user') 
+    .populate('roles'); 
      
       if (!patient) {
       throw new HttpException('Patient profile not found', HttpStatus.NOT_FOUND);
@@ -131,19 +157,46 @@ async createPatient(dto: CreatePatientDTO) {
     }
 
 
-    async updatePatientProfile(id: string, dto: UpdatePatientDTO): Promise<Patient> {
-    const existPatient = await this.patientModel.findOne({ user: id });
-    if (!existPatient) {
-       throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
-     }
-     const patient = await this.patientModel.findByIdAndUpdate(
-     existPatient._id,  dto, { new: true }).populate({ path: 'user', populate: { path: 'roles' } });
+async updatePatientProfile(id: string, dto: any): Promise<Patient> {
+  // 1. Find the existing patient linked to the user
+  const existPatient = await this.patientModel
+    .findOne({ user: new Types.ObjectId(id) })
+    .exec();
 
-      if (!patient) {
-     throw new HttpException('Failed to update patient profile', HttpStatus.INTERNAL_SERVER_ERROR);
-     }
-     return patient;
+  if (!existPatient) {
+    throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
+  }
+
+  // 2. Prepare User update (Source of Truth)
+  const userUpdateData: any = {};
+  if (dto.name) userUpdateData.name = dto.name;
+  if (dto.email) userUpdateData.email = dto.email;
+  if (dto.password) {
+    userUpdateData.password = await bcrypt.hash(dto.password, 10);
+  }
+
+  if (Object.keys(userUpdateData).length > 0) {
+    await this.userModel.findByIdAndUpdate(id, userUpdateData).exec();
+  }
+
+  // 3. Prepare and Update Patient document
+  const updateData = { ...dto };
+  delete updateData.email; // Email usually lives in the User schema
+  
+  const patient = await this.patientModel
+    .findByIdAndUpdate(existPatient._id, updateData, { new: true })
+    .populate({ path: 'user', populate: { path: 'roles' } })
+    .exec();
+
+  if (!patient) {
+    throw new HttpException('Failed to update Patient profile', HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  // 4. Return as plain object cast to Patient
+  return patient.toObject() as Patient;
 }
+ 
+
     
      
     async LinkPatientToDoctor(patientId:string, doctorId:string): Promise<Patient>{
@@ -158,6 +211,11 @@ async createPatient(dto: CreatePatientDTO) {
         patient.doctor = doctor._id as any;
         await patient.save();
         await patient.populate({path:'doctor'});
+        await this.notificationService.saveNotification({
+   title: "New Patient Assigned",
+  message: `A new patient, ${patient.name}, has been assigned to your care.`,
+    userId: doctorId, 
+  });
         return patient;
      }
 

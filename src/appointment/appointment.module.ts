@@ -9,7 +9,7 @@ import { PatientService } from "../patient/services/patient.service";
 import { User, UserSchema } from "../user/schemas/user.schema";
 import { Doctor, DoctorSchema } from "../doctor/schemas/doctor.schema";
 import { MailModule } from "../common/mail/mail.module";
-
+import { NotificationModule } from "../notification/notification.module";
 
 @Module({
     imports:[
@@ -19,7 +19,7 @@ import { MailModule } from "../common/mail/mail.module";
         { name: User.name, schema: UserSchema },           
       { name: Role.name, schema: RoleSchema },
        { name: Doctor.name, schema: DoctorSchema },
-     ]), MailModule
+     ]), MailModule, NotificationModule
     ],
     controllers:[AppointmentController],
     providers:[AppointmentService, PatientService],

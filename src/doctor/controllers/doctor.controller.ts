@@ -13,7 +13,7 @@ import { CurrentUser } from "../../common/decorators/current-user.decorator";
 import { User } from "../../user/schemas/user.schema";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { RolesGuard } from "../../common/guards/role.guard";
-
+import { HttpException, HttpStatus } from "@nestjs/common";
 
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -29,7 +29,7 @@ import { RolesGuard } from "../../common/guards/role.guard";
 export class DoctorController{
    constructor(
     private readonly doctorservice: DoctorService,
-    // private readonly userservice: UserService
+  
    ){}
 
    @Post()
@@ -47,7 +47,7 @@ export class DoctorController{
    }
 
    @Get()
-   @Roles(RoleEnum.ADMIN)
+   @Roles(RoleEnum.ADMIN, RoleEnum.DOCTOR)
    @Permissions(PermissionCode.DOCTOR_READ)
    @ApiOperation({summary:"fetch all doctors"})
    @ApiResponse({status:200, description:"doctors fetched successfully"})
@@ -60,21 +60,26 @@ export class DoctorController{
    }
 
 
-    @Get('me/doctor-profile')
-    @Roles(RoleEnum.DOCTOR)
-     @ApiOperation({summary:'find a doctor profile'})
-     @ApiResponse({status:200, description:'doctor profile found successfully'})
-     async findDoctorProfile(
-    @CurrentUser() user: User,
-    @I18n() i18n:I18nContext,
-     ){
-     const response = await this.doctorservice.findDoctorProfile(user._id.toString())
-    const message = i18n.t("common.READ_DOCTOR_PROFILE")
-    return {data:response, message}
-     }
+   @Get('me/doctor-profile')
+@Roles(RoleEnum.DOCTOR, RoleEnum.ADMIN)
+@ApiOperation({summary:'find a doctor profile'})
+@ApiResponse({status:200, description:'doctor profile found successfully'})
+async findDoctorProfile(
+  @CurrentUser() user: User, 
+  @I18n() i18n: I18nContext,
+) {
+  // Safety Check
+  if (!user || !user._id) {
+    throw new HttpException('Current user not found in request', HttpStatus.UNAUTHORIZED);
+  }
+
+  const response = await this.doctorservice.findDoctorProfile(user._id.toString());
+  const message = i18n.t("common.READ_DOCTOR_PROFILE");
+  return { data: response, message };
+}
 
      @Patch('me/update/doctor-profile')
-     @Roles(RoleEnum.DOCTOR)
+     @Roles(RoleEnum.DOCTOR, RoleEnum.ADMIN)
      @ApiOperation({summary:"update profile information"})
      @ApiResponse({status:200, description:'profile information updated successfully'})
      async updateProfile(

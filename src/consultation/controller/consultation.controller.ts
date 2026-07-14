@@ -9,7 +9,7 @@ import { RoleEnum } from "../../common/enums/role.enum";
 
 @ApiTags('Consultations')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('consultations')
 export class ConsultationController {
   constructor(private readonly consultationService: ConsultationService) {}
