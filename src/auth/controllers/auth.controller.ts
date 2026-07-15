@@ -7,6 +7,11 @@ import { CreatePatientDTO } from "../../patient/dtos/create-patient.dto";
 import { LoginDto } from "../dtos/login.dto";
 import { RefreshTokenDto } from "../dtos/refresh-token.dto";
 import { ForgotPasswordDto, ResetPasswordDto } from "../dtos/reset-password.dto";
+import { CurrentUser } from "../../common/decorators/current-user.decorator";
+import { User } from "../../user/schemas/user.schema";
+import { UpdateUserDto } from "../../user/dtos/update-user.dto";
+import { Patch } from "@nestjs/common";
+import { UpdatePatientDTO } from "../../patient/dtos/update-patient.dto";
 
 @ApiTags("Auth")
 @ApiResponse({ status: 404, description: "NOT FOUND" })
@@ -19,6 +24,7 @@ import { ForgotPasswordDto, ResetPasswordDto } from "../dtos/reset-password.dto"
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  
   @Post("register")
   @ApiOperation({ summary: "Patient self-registration" })
   @ApiResponse({ status: 200, description: "registration successful" })
@@ -42,9 +48,23 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: "Get current user profile" })
-   async getProfile(@Req() req) {
-   return this.authService.getProfile(req.user.sub);
+   async getProfile(
+      @CurrentUser() user: User,
+   ) {
+   return this.authService.getProfile(user._id.toString());
    }
+
+    @Patch('update/profile')
+    @UseGuards(JwtAuthGuard)
+      async updateMyPatientProfile(
+      @CurrentUser() user: User,
+      @Body() dto:UpdatePatientDTO,
+      @I18n() i18n:I18nContext
+      ){
+         const response = await this.authService.updateProfile(user._id.toString(), dto)
+         const message = i18n.t("common.UPDATE_PATIENT_PROFILE")
+         return {data:response, message}
+      }
 
   @Post("refresh")
   @ApiOperation({ summary: "Exchange a refresh token for a new access token" })
@@ -61,9 +81,10 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: "Invalidate the current refresh token" })
   @ApiResponse({ status: 200, description: "logout successful" })
-  async logout(@Req() req, @I18n() i18n: I18nContext) {
-  const userId = req.user.sub; 
-  const response = await this.authService.logout(userId);
+  async logout(
+     @CurrentUser() user: User,
+     @I18n() i18n: I18nContext) {
+  const response = await this.authService.logout(user._id.toString());
   const message = i18n.t("common.AUTH_LOGOUT");
   return { data: response, message };
   }

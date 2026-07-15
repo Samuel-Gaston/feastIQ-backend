@@ -19,6 +19,8 @@ import { ReviewModule } from './reviews/review.module';
 import { MailModule } from './common/mail/mail.module';
 import {AdminModule} from './admin/admin.module';
 import {ConsultationModule} from './consultation/consultation.module';
+import { AuthModule } from './auth/auth.module';
+import { ReportModule } from './report/report.module';
 @Module({
   imports: [
        // Load .env globally
@@ -64,6 +66,8 @@ import {ConsultationModule} from './consultation/consultation.module';
     ReviewModule,
     MailModule,
     AdminModule,
+    AuthModule,
+    ReportModule
 
   ],
   controllers: [AppController],

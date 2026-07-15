@@ -145,6 +145,7 @@ export class PatientController{
       const message = i18n.t("common.PATIENT_ASSIGN_TO_DOCTOR")
       return {data:response, message}
    }
+   
 
 
   

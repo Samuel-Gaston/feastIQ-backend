@@ -130,7 +130,6 @@ async updatePatient(id: string, dto: any): Promise<Patient> {
 }
 
 
-        
     async deletePatient(id:string): Promise<void>{
            const existPatient = await this.patientModel.findById(id)
         if(!existPatient){
@@ -152,6 +151,7 @@ async updatePatient(id: string, dto: any): Promise<Patient> {
       if (!patient) {
       throw new HttpException('Patient profile not found', HttpStatus.NOT_FOUND);
       }
+      
 
       return patient;
     }

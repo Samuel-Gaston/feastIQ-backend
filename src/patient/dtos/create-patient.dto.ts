@@ -21,6 +21,7 @@ export class CreatePatientDTO {
   @MaxLength(50)
   password?: string;
 
+  
   @ApiPropertyOptional({ description: 'enter phone number' })
   @IsOptional()
   @IsString()

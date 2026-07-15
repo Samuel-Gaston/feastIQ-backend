@@ -25,7 +25,6 @@ import { MailModule } from "../common/mail/mail.module";
         signOptions: { expiresIn: "15m" },
       }),
     }),
-
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: Patient.name, schema: PatientSchema },

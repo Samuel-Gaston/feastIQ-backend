@@ -299,16 +299,47 @@ async login(dto: LoginDto) {
     return { message: 'Password reset successfully' };
   }
 
- 
-  async getProfile(userId: string) {
-    const user = await this.userModel
-      .findById(userId)
-      .populate('roles')
-      .select('-password -refreshTokenHash');
 
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    return user;
-  }
+async getProfile(userId: string) {
+  // 1. Fetch the user
+  const user = await this.userModel
+    .findById(userId)
+    .populate('roles')
+    .select('-password -refreshTokenHash')
+    .lean();
+
+  if (!user) throw new NotFoundException('User not found');
+
+  // 2. Fetch the patient using the user ID reference
+  const patient = await this.patientModel.findOne({ user: new Types.ObjectId(userId) }).lean();
+
+  // 3. Return a merged object
+  return {
+    ...user,
+    phone: patient?.phone || '',
+    address: patient?.address || '',
+  };
+}
+
+async updateProfile(userId: string, dto: any): Promise<any> {
+  // 1. Update User name/email
+  await this.userModel.findByIdAndUpdate(userId, {
+    name: dto.name,
+    email: dto.email
+  }).exec();
+
+  // 2. Update Patient phone/address (Use user reference)
+  const patient = await this.patientModel.findOneAndUpdate(
+    { user: new Types.ObjectId(userId) },
+    { 
+      $set: { 
+        phone: dto.phone, 
+        address: dto.address 
+      } 
+    },
+    { new: true, upsert: true }
+  ).exec();
+
+  return patient.toObject();
+}
 }
