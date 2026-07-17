@@ -6,13 +6,15 @@ import { Appointment } from "../../appointment/schemas/appointment.schema";
 import { Doctor } from "../../doctor/schemas/doctor.schema";
 import { CreateConsultationDTO } from "../dtos/create-consultation.dto";
 import { AppointmentStatus } from "../../common/enums/appointment-status.enum";
+import { Patient } from "../../patient/schemas/patient.schema";
 
 @Injectable()
 export class ConsultationService {
   constructor(
     @InjectModel(Consultation.name) private readonly consultationModel: Model<Consultation>,
     @InjectModel(Appointment.name) private readonly appointmentModel: Model<Appointment>,
-    @InjectModel(Doctor.name) private readonly doctorModel: Model<Doctor>, // ← ADDED
+    @InjectModel(Doctor.name) private readonly doctorModel: Model<Doctor>,
+        @InjectModel(Patient.name) private readonly patientModel: Model<Patient>, 
   ) {}
 
   // ─── DOCTOR: Create a consultation after a completed/confirmed appointment ──
@@ -79,12 +81,33 @@ export class ConsultationService {
     const doctor = await this.doctorModel.findOne({ user: new Types.ObjectId(userId) });
     if (!doctor) throw new NotFoundException('Doctor profile not found');
 
+
     return this.consultationModel
       .find({ doctor: doctor._id })
       .populate({ path: 'patient', select: 'name email phone address' })
       .populate({ path: 'appointment', select: 'scheduledAt consultationType reason status' })
       .sort({ createdAt: -1 });
   }
+
+
+async getPatientConsultationsByUserId(userId: string): Promise<Consultation[]> {
+  // userId from JWT is User._id — look up the Patient document first
+  const patient = await this.patientModel.findOne({ user: new Types.ObjectId(userId) });
+  if (!patient) {
+    throw new NotFoundException('Patient profile not found');
+  }
+
+  return this.consultationModel
+    .find({ patient: patient._id })
+    .populate({ path: 'doctor', select: 'name email specialization licenseNumber' })
+    .populate({
+      path: 'appointment',
+      select: 'scheduledAt consultationType reason status completedAt',
+    })
+    .sort({ createdAt: -1 });
+}
+
+
 
   // ─── DOCTOR/ADMIN: Get consultation history for a specific patient ──
   async getPatientHistory(patientId: string): Promise<Consultation[]> {

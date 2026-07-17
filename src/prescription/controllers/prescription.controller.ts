@@ -9,6 +9,7 @@ import { CreatePrescriptionDTO, UpdatePrescriptionDTO } from "../dtos/create-pre
 import { I18n, I18nContext } from "nestjs-i18n";
 import { RolesGuard } from "../../common/guards/role.guard";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
+import { Req } from "@nestjs/common";
 
 @ApiTags('Prescriptions')
 @ApiBearerAuth()
@@ -63,6 +64,19 @@ export class PrescriptionController {
     return { data: response, message };
   }
 
+
+  @Get('my/patient')
+@Roles(RoleEnum.PATIENT)
+@ApiOperation({ summary: 'Get all prescriptions for the logged-in patient' })
+@ApiResponse({ status: 200, description: 'Patient prescriptions fetched successfully' })
+async getMyPrescriptions(
+  @Req() req: any,
+  @I18n() i18n: I18nContext,
+) {
+  const response = await this.prescriptionservice.getMyPrescriptions(req.user._id);
+  const message = i18n.t('common.PRESCRIPTION_PATIENT_READ');
+  return { data: response, message };
+}
 
   @Get(':id')
   @Roles(RoleEnum.ADMIN, RoleEnum.DOCTOR, RoleEnum.SUPER_ADMIN)

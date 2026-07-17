@@ -84,6 +84,23 @@ export class PatientController{
       return {data:response, message}
    }
 
+   @Get('me/assigned-doctor')
+@Roles(RoleEnum.PATIENT) // Only accessible by patients
+@ApiOperation({ summary: 'Get my assigned doctor' })
+@ApiResponse({ status: 200, description: 'Assigned doctor fetched successfully' })
+async getMyDoctor(
+  @CurrentUser() user: User,
+  @I18n() i18n: I18nContext,
+) {
+  if (!user || !user._id) {
+    throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+  }
+  
+  const response = await this.patientservice.getMyAssignedDoctor(user._id.toString());
+  const message = i18n.t("common.GET_ASSIGNED_DOCTOR");
+  return { data: response, message };
+}
+
    @Get(':id')
    @Roles(RoleEnum.ADMIN, RoleEnum.DOCTOR, RoleEnum.PATIENT)
    @Permissions(PermissionCode.PATIENT_READ_ONE)
@@ -126,7 +143,6 @@ export class PatientController{
     const message = i18n.t("common.PATIENT_DELETED")
     return {data:response, message}
    }
-
 
 
 

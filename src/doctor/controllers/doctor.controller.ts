@@ -47,7 +47,7 @@ export class DoctorController{
    }
 
    @Get()
-   @Roles(RoleEnum.ADMIN, RoleEnum.DOCTOR)
+   @Roles(RoleEnum.ADMIN, RoleEnum.DOCTOR, RoleEnum.PATIENT)
    @Permissions(PermissionCode.DOCTOR_READ)
    @ApiOperation({summary:"fetch all doctors"})
    @ApiResponse({status:200, description:"doctors fetched successfully"})
@@ -107,7 +107,7 @@ async getMyPatients(
 }
 
    @Get(':id')
-   @Roles(RoleEnum.ADMIN)
+   @Roles(RoleEnum.ADMIN, RoleEnum.PATIENT)
    @Permissions(PermissionCode.DOCTOR_READ)
    @ApiOperation({summary:"fetch one doctor by Id"})
    @ApiResponse({status:200, description:"doctor fetched successfully"})

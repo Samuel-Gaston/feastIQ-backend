@@ -4,7 +4,7 @@ import { Types, Document } from "mongoose";
 import { Doctor } from "../../doctor/schemas/doctor.schema";
 import { Appointment } from "../../appointment/schemas/appointment.schema";
 import { Medication } from "../../medications/schemas/medication.schema";
-
+ 
 @Schema({ timestamps: true }) 
 export class Prescription extends Document {
   @Prop({ type: Types.ObjectId, ref: 'Patient', required: true })

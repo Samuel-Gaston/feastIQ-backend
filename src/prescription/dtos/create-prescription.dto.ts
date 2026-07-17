@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsNotEmpty, IsOptional, IsString, IsArray, IsMongoId, IsDateString } from "class-validator";
-
+ 
 export class CreatePrescriptionDTO {
   @ApiProperty({ description: 'Enter the patient id' })
   @IsNotEmpty()

@@ -4,6 +4,7 @@ import { Appointment } from "../../appointment/schemas/appointment.schema";
 import { Patient } from "../../patient/schemas/patient.schema";
 import { Doctor } from "../../doctor/schemas/doctor.schema";
 
+
 @Schema({ timestamps: true })
 export class Consultation extends Document {
   @Prop({ type: Types.ObjectId, ref: 'Appointment', required: true })

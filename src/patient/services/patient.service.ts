@@ -219,4 +219,21 @@ async updatePatientProfile(id: string, dto: any): Promise<Patient> {
         return patient;
      }
 
+     async getMyAssignedDoctor(userId: string): Promise<Doctor> {
+  const patient = await this.patientModel
+    .findOne({ user: new Types.ObjectId(userId) })
+    .populate('doctor') // Populates doctor details
+    .exec();
+
+  if (!patient) {
+    throw new HttpException('Patient profile not found', HttpStatus.NOT_FOUND);
+  }
+
+  if (!patient.doctor) {
+    throw new HttpException('No doctor assigned to this patient', HttpStatus.NOT_FOUND);
+  }
+
+  return patient.doctor as unknown as Doctor;
+}
+
 }

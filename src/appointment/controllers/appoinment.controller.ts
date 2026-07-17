@@ -19,6 +19,8 @@ import { Roles } from '../../common/decorators/role.decorator';
 import { RoleEnum } from '../../common/enums/role.enum';
 import { AppointmentStatus } from '../../common/enums/appointment-status.enum';
 import { RolesGuard } from '../../common/guards/role.guard';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { User } from '../../user/schemas/user.schema';
 
 @ApiTags('Appointments')
 @ApiBearerAuth()
@@ -28,17 +30,16 @@ export class AppointmentController {
   constructor(private readonly appointmentService: AppointmentService) {}
 
   // ─── PATIENT: Book an appointment ────────────────────────────────
-  @Post()
-  @Roles(RoleEnum.PATIENT, RoleEnum.ADMIN)
-  @ApiOperation({ summary: 'Book a new appointment' })
-  @ApiResponse({ status: 201, description: 'Appointment booked successfully' })
-  async create(
-    @Body() dto: CreateAppointmentDTO,
-    @I18n() i18n: I18nContext,
-  ) {
-    const response = await this.appointmentService.createAppointment(dto);
-    return { data: response, message: 'Appointment booked successfully' };
-  }
+@Post()
+@Roles(RoleEnum.PATIENT, RoleEnum.ADMIN)
+async create(
+  @Body() dto: CreateAppointmentDTO,
+  @Req() req: any, // 1. Inject the request
+) {
+  const userId = req.user._id; // 2. Get the authenticated user ID
+  const response = await this.appointmentService.createAppointment(userId, dto);
+  return { data: response, message: 'Appointment booked successfully' };
+}
 
   // ─── ADMIN/DOCTOR: Get all appointments ──────────────────────────
   @Get()

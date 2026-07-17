@@ -9,6 +9,7 @@ import { CreateMedicationDTO, UpdateMedicationDTO } from "../dtos/create-medicat
 import { I18n, I18nContext } from "nestjs-i18n";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { RolesGuard } from "../../common/guards/role.guard";
+import { Req } from "@nestjs/common";
 
 @ApiTags('Medications')
 @ApiBearerAuth()
@@ -49,8 +50,7 @@ export class MedicationController {
     return { data: response, message };
   }
 
-  // ─── Get all medications for a prescription ────────────────────
-  // IMPORTANT: this route must come before :id to avoid conflict
+ 
   @Get('prescription/:prescriptionId')
   @Roles(RoleEnum.ADMIN, RoleEnum.SUPER_ADMIN, RoleEnum.DOCTOR, RoleEnum.PATIENT)
   @Permissions(PermissionCode.MEDICATION_READ)
@@ -64,7 +64,26 @@ export class MedicationController {
     return { data: response, message };
   }
 
-  // ─── Get single medication ─────────────────────────────────────
+ 
+
+
+@Get('my/patient')
+@Roles(RoleEnum.PATIENT)
+@Permissions(PermissionCode.MEDICATION_READ)
+@ApiOperation({ summary: 'Get all medications for the logged-in patient' })
+@ApiResponse({ status: 200, description: 'Patient medications fetched successfully' })
+async getMyMedications(
+  @Req() req: any,
+  @I18n() i18n: I18nContext,
+) {
+  const response = await this.medicationService.getMyMedications(req.user._id);
+  const message = i18n.t('common.MEDICATION_READ_ALL');
+  return { data: response, message };
+}
+
+
+
+ 
   @Get(':id')
   @Roles(RoleEnum.ADMIN, RoleEnum.SUPER_ADMIN, RoleEnum.DOCTOR, RoleEnum.PATIENT)
   @Permissions(PermissionCode.MEDICATION_READ)
@@ -78,10 +97,10 @@ export class MedicationController {
     return { data: response, message };
   }
 
-  // ─── Update medication ─────────────────────────────────────────
+ 
   @Patch(':id')
   @Roles(RoleEnum.ADMIN, RoleEnum.SUPER_ADMIN, RoleEnum.DOCTOR)
-  @Permissions(PermissionCode.MEDICATION_UPDATE) // FIXED: was APPOINTMENT_READ
+  @Permissions(PermissionCode.MEDICATION_UPDATE) 
   @ApiOperation({ summary: 'Update a medication' })
   async update(
     @Param('id') id: string,
@@ -93,7 +112,8 @@ export class MedicationController {
     return { data: response, message };
   }
 
-  // ─── Delete medication ─────────────────────────────────────────
+
+ 
   @Delete(':id')
   @Roles(RoleEnum.ADMIN, RoleEnum.SUPER_ADMIN, RoleEnum.DOCTOR)
   @Permissions(PermissionCode.MEDICATION_DELETE)

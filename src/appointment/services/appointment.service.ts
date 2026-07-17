@@ -25,42 +25,36 @@ export class AppointmentService {
     private readonly doctorModel: Model<Doctor>,
   ) {}
 
+
   // ─── PATIENT: Book a new appointment ────────────────────────────
-  async createAppointment(dto: CreateAppointmentDTO): Promise<Appointment> {
-    const { patient, doctor, scheduledAt, consultationType, reason, notes } = dto;
+async createAppointment(userId: string, dto: CreateAppointmentDTO): Promise<Appointment> {
+  const { doctor, scheduledAt, consultationType, reason, notes } = dto;
 
-    const existingPatient = await this.patientModel.findById(patient);
-    if (!existingPatient) {
-      throw new NotFoundException('Patient not found');
-    }
-
-    const existingDoctor = await this.doctorModel.findById(doctor);
-    if (!existingDoctor) {
-      throw new NotFoundException('Doctor not found');
-    }
-
-    // Prevent booking in the past
-    if (scheduledAt && new Date(scheduledAt) < new Date()) {
-      throw new BadRequestException('Cannot book an appointment in the past');
-    }
-
-    const appointment = await this.appointmentModel.create({
-      patient: new Types.ObjectId(patient),
-      doctor: new Types.ObjectId(doctor),
-      scheduledAt,
-      consultationType,
-      reason,
-      notes,
-      status: AppointmentStatus.PENDING,
-    });
-
-    await appointment.populate([
-      { path: 'patient', select: 'name email phone' },
-      { path: 'doctor', select: 'name email specialization' },
-    ]);
-
-    return appointment;
+  // 1. Find the patient profile linked to the logged-in user
+  const patientProfile = await this.patientModel.findOne({ user: userId });
+  if (!patientProfile) {
+    throw new NotFoundException('Patient profile not found for this user');
   }
+
+  // 2. Validate doctor
+  const existingDoctor = await this.doctorModel.findById(doctor);
+  if (!existingDoctor) {
+    throw new NotFoundException('Doctor not found');
+  }
+
+  // 3. Create appointment using the found patientProfile._id
+  const appointment = await this.appointmentModel.create({
+    patient: patientProfile._id, 
+    doctor: new Types.ObjectId(doctor),
+    scheduledAt,
+    consultationType,
+    reason,
+    notes,
+    status: AppointmentStatus.PENDING,
+  });
+
+  return appointment;
+}
 
   // ─── ADMIN/DOCTOR: Get all appointments ─────────────────────────
   async getAllAppointments(): Promise<Appointment[]> {

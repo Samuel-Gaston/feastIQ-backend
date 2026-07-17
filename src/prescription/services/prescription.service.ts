@@ -12,7 +12,7 @@ import { Patient } from "../../patient/schemas/patient.schema";
 import { Doctor } from "../../doctor/schemas/doctor.schema";
 import { Appointment } from "../../appointment/schemas/appointment.schema";
 import { CreatePrescriptionDTO, UpdatePrescriptionDTO } from "../dtos/create-prescription.dto";
-
+  
 @Injectable()
 export class PrescriptionService {
   constructor(
@@ -74,6 +74,24 @@ export class PrescriptionService {
       .populate({ path: 'appointment', select: 'scheduledAt consultationType reason' })
       .sort({ createdAt: -1 });
   }
+
+  
+  async getMyPrescriptions(userId: string): Promise<Prescription[]> {
+  // userId from JWT is User._id — find Patient document first
+  const patient = await this.patientModel.findOne({ user: new Types.ObjectId(userId) });
+  if (!patient) {
+    throw new NotFoundException('Patient profile not found');
+  }
+
+  return this.prescriptionModel
+    .find({ patient: patient._id })
+    .populate({ path: 'doctor', select: 'name email specialization licenseNumber' })
+    .populate({
+      path: 'appointment',
+      select: 'scheduledAt consultationType reason status',
+    })
+    .sort({ createdAt: -1 });
+}
 
   // ─── Get all prescriptions for a patient ────────────────────────
   async getAllPatientPrescritions(patientId: string): Promise<Prescription[]> {

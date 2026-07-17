@@ -5,6 +5,7 @@ import { Prescription } from "../../prescription/schemas/prescriptions.schema";
 import { Model, Types } from "mongoose";
 import { CreateMedicationDTO, UpdateMedicationDTO } from "../dtos/create-medication.dto";
 
+
 @Injectable()
 export class MedicationService {
   constructor(
@@ -81,6 +82,46 @@ export class MedicationService {
       })
       .sort({ createdAt: -1 });
   }
+
+
+
+
+async getMyMedications(userId: string): Promise<Medication[]> {
+  // Step 1: find the Patient document from User._id
+  const patient = await this.prescriptionModel
+    .db.model('Patient')
+    .findOne({ user: new Types.ObjectId(userId) })
+    .lean();
+
+  if (!patient) {
+    throw new NotFoundException('Patient profile not found');
+  }
+
+  // Step 2: find all prescriptions belonging to this patient
+  const prescriptions = await this.prescriptionModel
+    .find({ patient: (patient as any)._id })
+    .select('_id')
+    .lean();
+
+  if (!prescriptions || prescriptions.length === 0) return [];
+
+  const prescriptionIds = prescriptions.map(p => p._id);
+
+  // Step 3: find all medications linked to those prescriptions
+  return this.medicationModel
+    .find({ prescription: { $in: prescriptionIds } })
+    .populate({
+      path: 'prescription',
+      select: 'notes issuedAt expiresAt',
+      populate: [
+        { path: 'doctor', select: 'name email specialization' },
+        { path: 'appointment', select: 'scheduledAt consultationType reason' },
+      ],
+    })
+    .sort({ createdAt: -1 });
+}
+
+
 
   // ─── Get single medication ─────────────────────────────────────
   async getMedication(id: string): Promise<Medication> {

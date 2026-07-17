@@ -9,7 +9,7 @@ import { RoleEnum } from "../../common/enums/role.enum";
 
 @ApiTags('Consultations')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('consultations')
 export class ConsultationController {
   constructor(private readonly consultationService: ConsultationService) {}
@@ -20,7 +20,6 @@ export class ConsultationController {
   @ApiOperation({ summary: 'Doctor creates a consultation after an appointment' })
   @ApiResponse({ status: 201, description: 'Consultation created successfully' })
   async create(@Req() req: any, @Body() dto: CreateConsultationDTO) {
-    // FIXED: pass req.user._id (User._id from JWT), not a non-existent doctorProfileId
     const response = await this.consultationService.create(req.user._id, dto);
     return { data: response, message: 'Consultation created successfully' };
   }
@@ -34,6 +33,16 @@ export class ConsultationController {
     return { data: response, message: 'Consultations fetched successfully' };
   }
 
+  // ─── PATIENT: Get my own consultation history ─────────────────────
+  // NEW — patient fetches their own consultations using JWT identity
+  @Get('my/patient')
+  @Roles(RoleEnum.PATIENT)
+  @ApiOperation({ summary: 'Get all consultations for the logged-in patient' })
+  async getMyPatientConsultations(@Req() req: any) {
+    const response = await this.consultationService.getPatientConsultationsByUserId(req.user._id);
+    return { data: response, message: 'Your consultations fetched successfully' };
+  }
+
   // ─── ADMIN: Get all consultations ────────────────────────────────
   @Get()
   @Roles(RoleEnum.ADMIN)
@@ -44,15 +53,16 @@ export class ConsultationController {
   }
 
   // ─── DOCTOR/ADMIN: Get one consultation ──────────────────────────
+  // NOTE: this must come AFTER /my and /my/patient to avoid route conflict
   @Get(':id')
-  @Roles(RoleEnum.DOCTOR, RoleEnum.ADMIN)
+  @Roles(RoleEnum.DOCTOR, RoleEnum.ADMIN, RoleEnum.PATIENT)
   @ApiOperation({ summary: 'Get a single consultation by ID' })
   async getOne(@Param('id') id: string) {
     const response = await this.consultationService.getOne(id);
     return { data: response, message: 'Consultation fetched successfully' };
   }
 
-  // ─── DOCTOR/ADMIN: Get patient consultation history ───────────────
+  // ─── DOCTOR/ADMIN: Get patient consultation history by patientId ──
   @Get('patient/:patientId')
   @Roles(RoleEnum.DOCTOR, RoleEnum.ADMIN)
   @ApiOperation({ summary: 'Get full consultation history for a patient' })
