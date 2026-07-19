@@ -21,6 +21,7 @@ import {AdminModule} from './admin/admin.module';
 import {ConsultationModule} from './consultation/consultation.module';
 import { AuthModule } from './auth/auth.module';
 import { ReportModule } from './report/report.module';
+import { AdminMessageModule } from './adminMessages/adminMessage.module';
 @Module({
   imports: [
        // Load .env globally
@@ -67,7 +68,8 @@ import { ReportModule } from './report/report.module';
     MailModule,
     AdminModule,
     AuthModule,
-    ReportModule
+    ReportModule,
+    AdminMessageModule
 
   ],
   controllers: [AppController],
