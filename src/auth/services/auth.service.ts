@@ -321,24 +321,59 @@ async getProfile(userId: string) {
   };
 }
 
+
+// async updateProfile(userId: string, dto: any): Promise<any> {
+//   // 1. Update User name/email
+//   await this.userModel.findByIdAndUpdate(userId, {
+//     name: dto.name,
+//     email: dto.email
+//   }).exec();
+
+//   // 2. Update Patient phone/address (Use user reference)
+//   const patient = await this.patientModel.findOneAndUpdate(
+//     { user: new Types.ObjectId(userId) },
+//     { 
+//       $set: { 
+//         phone: dto.phone, 
+//         address: dto.address 
+//       } 
+//     },
+//     { new: true, upsert: true }
+//   ).exec();
+
+//   return patient.toObject();
+// }
+
 async updateProfile(userId: string, dto: any): Promise<any> {
-  // 1. Update User name/email
+  console.log('[updateProfile] userId:', userId, 'dto:', JSON.stringify(dto));
+
+  // 1. Update the User collection (credentials / identity)
   await this.userModel.findByIdAndUpdate(userId, {
     name: dto.name,
     email: dto.email
-  }).exec();
+  }, { new: true }).exec();
 
-  // 2. Update Patient phone/address (Use user reference)
+  // 2. Update the Patient collection (since Patient also stores name, email, phone, address)
+  const userObjectId = new Types.ObjectId(userId);
+
   const patient = await this.patientModel.findOneAndUpdate(
-    { user: new Types.ObjectId(userId) },
+    { user: userObjectId },
     { 
       $set: { 
+        name: dto.name,
+        email: dto.email,
         phone: dto.phone, 
         address: dto.address 
       } 
     },
     { new: true, upsert: true }
   ).exec();
+
+  console.log('[updateProfile] matched/updated patient:', patient?._id?.toString());
+
+  if (!patient) {
+    throw new Error('Patient profile not found');
+  }
 
   return patient.toObject();
 }

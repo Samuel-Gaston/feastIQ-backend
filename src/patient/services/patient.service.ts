@@ -156,7 +156,6 @@ async updatePatient(id: string, dto: any): Promise<Patient> {
       return patient;
     }
 
-
 async updatePatientProfile(id: string, dto: any): Promise<Patient> {
   // 1. Find the existing patient linked to the user
   const existPatient = await this.patientModel
@@ -186,6 +185,7 @@ async updatePatientProfile(id: string, dto: any): Promise<Patient> {
   const patient = await this.patientModel
     .findByIdAndUpdate(existPatient._id, updateData, { new: true })
     .populate({ path: 'user', populate: { path: 'roles' } })
+    .populate({path: 'patient'})
     .exec();
 
   if (!patient) {

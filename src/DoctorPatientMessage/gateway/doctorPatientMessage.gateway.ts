@@ -11,8 +11,9 @@ import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { Logger } from '@nestjs/common';
-import { ChatService } from '../services/chat.service';
-import { MessageType } from '../schemas/chat-message.schema';
+import { ChatService } from '../service/doctorPatientMessage.service';
+import { MessageType } from '../schema/doctorPatientMessage.schema';
+
 
 interface AuthSocket extends Socket {
   userId: string;
@@ -29,7 +30,7 @@ interface AuthSocket extends Socket {
 })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   private readonly logger = new Logger(ChatGateway.name);
 

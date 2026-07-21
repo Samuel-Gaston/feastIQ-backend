@@ -130,7 +130,7 @@ export class ChatService {
       return {
         ...appt,
         lastMessage:   msgInfo?.lastMessage || '',
-        lastMessageAt: msgInfo?.lastMessageAt || appt.createdAt,
+lastMessageAt: msgInfo?.lastMessageAt || (appt as any).createdAt,
         messageCount:  msgInfo?.messageCount || 0,
       };
     });
@@ -172,7 +172,7 @@ export class ChatService {
       return {
         ...appt,
         lastMessage:   msgInfo?.lastMessage || '',
-        lastMessageAt: msgInfo?.lastMessageAt || appt.createdAt,
+lastMessageAt: msgInfo?.lastMessageAt || (appt as any).createdAt,
         messageCount:  msgInfo?.messageCount || 0,
       };
     });

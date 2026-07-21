@@ -22,6 +22,7 @@ import {ConsultationModule} from './consultation/consultation.module';
 import { AuthModule } from './auth/auth.module';
 import { ReportModule } from './report/report.module';
 import { AdminMessageModule } from './adminMessages/adminMessage.module';
+import { doctorPatientMessageModule } from './DoctorPatientMessage/doctorPatient.module';
 @Module({
   imports: [
        // Load .env globally
@@ -69,7 +70,8 @@ import { AdminMessageModule } from './adminMessages/adminMessage.module';
     AdminModule,
     AuthModule,
     ReportModule,
-    AdminMessageModule
+    AdminMessageModule,
+    doctorPatientMessageModule
 
   ],
   controllers: [AppController],
