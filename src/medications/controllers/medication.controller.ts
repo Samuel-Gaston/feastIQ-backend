@@ -24,6 +24,7 @@ import { Req } from "@nestjs/common";
 export class MedicationController {
   constructor(private readonly medicationService: MedicationService) {}
 
+
   // ─── Create medication under a prescription ────────────────────
   @Post()
   @Roles(RoleEnum.ADMIN, RoleEnum.SUPER_ADMIN, RoleEnum.DOCTOR)
@@ -81,6 +82,19 @@ async getMyMedications(
   return { data: response, message };
 }
 
+@Get('my/doctor')
+@Roles(RoleEnum.DOCTOR)
+@Permissions(PermissionCode.MEDICATION_READ)
+@ApiOperation({ summary: 'Get all medications created by the logged-in doctor' })
+@ApiResponse({ status: 200, description: 'Doctor medications fetched successfully' })
+async getMyDoctorMedications(
+  @Req() req: any,
+  @I18n() i18n: I18nContext,
+) {
+  const response = await this.medicationService.getMyDoctorMedications(req.user._id);
+  const message = i18n.t('common.MEDICATION_READ_ALL');
+  return { data: response, message };
+}
 
 
  

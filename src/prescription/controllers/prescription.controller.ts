@@ -11,6 +11,7 @@ import { RolesGuard } from "../../common/guards/role.guard";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { Req } from "@nestjs/common";
 
+
 @ApiTags('Prescriptions')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
@@ -75,6 +76,19 @@ async getMyPrescriptions(
 ) {
   const response = await this.prescriptionservice.getMyPrescriptions(req.user._id);
   const message = i18n.t('common.PRESCRIPTION_PATIENT_READ');
+  return { data: response, message };
+}
+
+@Get('my/doctor')
+@Roles(RoleEnum.DOCTOR)
+@ApiOperation({ summary: 'Get all prescriptions created by the logged-in doctor' })
+@ApiResponse({ status: 200, description: 'Doctor prescriptions fetched successfully' })
+async getMyDoctorPrescriptions(
+  @Req() req: any,
+  @I18n() i18n: I18nContext,
+) {
+  const response = await this.prescriptionservice.getMyDoctorPrescriptions(req.user._id);
+  const message = i18n.t('common.PRESCRIPTION_READ_ALL');
   return { data: response, message };
 }
 

@@ -105,6 +105,21 @@ export class PrescriptionService {
       .sort({ createdAt: -1 });
   }
 
+
+  async getMyDoctorPrescriptions(userId: string): Promise<Prescription[]> {
+  // userId from JWT is User._id — find Doctor document first
+  const doctor = await this.doctorModel.findOne({ user: new Types.ObjectId(userId) });
+  if (!doctor) {
+    throw new NotFoundException('Doctor profile not found');
+  }
+
+  return this.prescriptionModel
+    .find({ doctor: doctor._id })
+    .populate({ path: 'patient', select: 'name email phone' })
+    .populate({ path: 'appointment', select: 'scheduledAt consultationType reason' })
+    .sort({ createdAt: -1 });
+}
+
   // ─── Get single prescription ─────────────────────────────────────
   async getPrescription(id: string): Promise<Prescription> {
     const prescription = await this.prescriptionModel

@@ -84,6 +84,41 @@ export class MedicationService {
   }
 
 
+  async getMyDoctorMedications(userId: string): Promise<Medication[]> {
+  // Step 1: find the Doctor document from User._id
+  const doctor = await this.prescriptionModel
+    .db.model('Doctor')
+    .findOne({ user: new Types.ObjectId(userId) })
+    .lean();
+
+  if (!doctor) {
+    throw new NotFoundException('Doctor profile not found');
+  }
+
+  // Step 2: find all prescriptions created by this doctor
+  const prescriptions = await this.prescriptionModel
+    .find({ doctor: (doctor as any)._id })
+    .select('_id')
+    .lean();
+
+  if (!prescriptions || prescriptions.length === 0) return [];
+
+  const prescriptionIds = prescriptions.map(p => p._id);
+
+  // Step 3: find all medications linked to those prescriptions
+  return this.medicationModel
+    .find({ prescription: { $in: prescriptionIds } })
+    .populate({
+      path: 'prescription',
+      populate: [
+        { path: 'patient', select: 'name email phone' },
+        { path: 'doctor', select: 'name email specialization' },
+      ],
+    })
+    .sort({ createdAt: -1 });
+}
+
+
 
 
 async getMyMedications(userId: string): Promise<Medication[]> {
@@ -120,7 +155,6 @@ async getMyMedications(userId: string): Promise<Medication[]> {
     })
     .sort({ createdAt: -1 });
 }
-
 
 
   // ─── Get single medication ─────────────────────────────────────
