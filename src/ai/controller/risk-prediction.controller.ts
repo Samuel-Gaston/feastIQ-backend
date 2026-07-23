@@ -5,6 +5,7 @@ import { Model, Types } from 'mongoose';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RiskPredictionService } from '../service/risk-prediction.service';
 import { AiProfile } from '../schemas/ai-profile.schema';
+import { Req } from '@nestjs/common';
 
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
@@ -14,6 +15,15 @@ export class RiskPredictionController {
     private readonly riskPredictionService: RiskPredictionService,
     @InjectModel(AiProfile.name) private readonly aiProfileModel: Model<AiProfile>,
   ) {}
+
+ 
+
+@Get('risk-profile/my')
+async getMyRiskProfile(@Req() req: any) {
+  const { patientId } = await this.riskPredictionService.getMyRiskProfile(req.user._id);
+  const profile = await this.aiProfileModel.findOne({ patient: new Types.ObjectId(patientId) });
+  return profile?.riskScores || null;
+}
 
   @Get('risk-profile/:patientId')
   async getRiskProfile(@Param('patientId') patientId: string) {
@@ -25,4 +35,5 @@ export class RiskPredictionController {
   async scoreNow(@Param('patientId') patientId: string) {
     return this.riskPredictionService.manualScore(patientId);
   }
+  
 }

@@ -10,6 +10,11 @@ import { Prescription, PrescriptionSchema } from '../prescription/schemas/prescr
 import { HealthLogsModule } from '../health-logs/health-logs.module';
 import { AiController } from './controller/ai.controller';
 import { RiskPredictionController } from './controller/risk-prediction.controller';
+import { SymptomCheckerService } from './service/symptom-checker.service';
+import { SymptomCheckerController } from './controller/symptom-checker.controller';
+import { AiChatMessage, AiChatMessageSchema } from './schemas/ai-chat-message.schema';
+import { AiChatService } from './service/ai-chat.service';
+import { AiChatController } from './controller/ai-chat.controller';
 
 @Module({
   imports: [
@@ -19,11 +24,12 @@ import { RiskPredictionController } from './controller/risk-prediction.controlle
       { name: Patient.name, schema: PatientSchema },
       { name: Medication.name, schema: MedicationSchema },
       { name: Prescription.name, schema: PrescriptionSchema },
+       { name: AiChatMessage.name, schema: AiChatMessageSchema },
     ]),
     HealthLogsModule,
   ],
-  providers: [AnomalyDetectionService, RiskPredictionService],
-  controllers: [AiController, RiskPredictionController],
+  providers: [AnomalyDetectionService, RiskPredictionService, SymptomCheckerService, AiChatService],
+  controllers: [AiController, RiskPredictionController, SymptomCheckerController, AiChatController],
   exports: [AnomalyDetectionService, RiskPredictionService],
 })
 export class AiModule {}

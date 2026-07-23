@@ -49,6 +49,7 @@ export class RiskPredictionService implements OnModuleInit {
     }
   }
 
+
   private normalizeFeatures(raw: number[]): number[] {
     if (!this.normStats) throw new Error('Normalization stats not loaded');
     return raw.map((v, i) => (v - this.normStats!.means[i]) / this.normStats!.stds[i]);
@@ -117,4 +118,11 @@ export class RiskPredictionService implements OnModuleInit {
       );
     }
   }
+
+  // add inside RiskPredictionService, alongside manualScore
+async getMyRiskProfile(userId: string) {
+  const patient = await this.patientModel.findOne({ user: new Types.ObjectId(userId) });
+  if (!patient) throw new Error('Patient profile not found');
+  return { patientId: patient._id.toString() };
+}
 }

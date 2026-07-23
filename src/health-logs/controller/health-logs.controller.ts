@@ -7,6 +7,7 @@ import { HealthLogsService } from "../services/health-logs.service";
 import { CreateHealthLogDTO } from "../dtos/create-health-log.dto";
 import { ApiBearerAuth } from "@nestjs/swagger";
 
+
 @ApiBearerAuth() 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('health-logs')

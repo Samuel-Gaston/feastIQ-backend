@@ -5,6 +5,7 @@ import { AnomalyDetectionService } from '../service/anomaly-detection.service';
 import { ApiOperation } from '@nestjs/swagger';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
+
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('ai')

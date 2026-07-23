@@ -23,6 +23,7 @@ export class HealthLogSeederService implements OnModuleInit {
       this.logger.warn('SEED_HEALTH_LOGS=true but SEED_PATIENT_ID is missing — skipping seed');
       return;
     }
+    
 
     // Don't reseed if this patient already has enough logs — avoids
     // piling up duplicates on every dev-server restart

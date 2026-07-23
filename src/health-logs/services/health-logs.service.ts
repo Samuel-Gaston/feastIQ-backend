@@ -7,6 +7,7 @@ import { Patient } from "../../patient/schemas/patient.schema";
 import { EventEmitter2 } from "@nestjs/event-emitter"; // npm install @nestjs/event-emitter
 import { CreateHealthLogDTO } from "../dtos/create-health-log.dto";
 
+
 @Injectable()
 export class HealthLogsService {
   constructor(

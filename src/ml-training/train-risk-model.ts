@@ -21,6 +21,7 @@ async function main() {
     ],
   });
 
+  
   model.compile({ optimizer: tf.train.adam(0.001), loss: 'binaryCrossentropy', metrics: ['accuracy'] });
 
   const history = await model.fit(trainXs, trainYs, {

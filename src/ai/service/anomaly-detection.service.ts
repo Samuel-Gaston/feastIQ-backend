@@ -118,6 +118,7 @@ export class AnomalyDetectionService {
     fs.mkdirSync(modelPath, { recursive: true });
     await this.saveModelToDisk(model, modelPath);
 
+    
     await this.aiProfileModel.findOneAndUpdate(
       { patient: new Types.ObjectId(patientId) },
       {
