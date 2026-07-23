@@ -36,4 +36,5 @@ export const mailConfig = (configService: ConfigService): MailerOptions => {
       },
     },
   };
+  
 };

@@ -134,17 +134,24 @@ export class DoctorService{
     return doctor;
     }
 
-    // ADMIN ONLY
-    async deleteDoctor(id:string): Promise<void>{
-         const existDoctor = await this.doctorModel.findById(id)
-     if(!existDoctor){
-        throw new HttpException("doctor not found", HttpStatus.NOT_FOUND)
-     }
-        const doctor = await this.doctorModel.findByIdAndDelete(id);
-        if(!doctor){
-            throw new HttpException("Doctor not found", HttpStatus.NOT_FOUND)
-        }
-    }
+   // ADMIN ONLY
+async deleteDoctor(id: string): Promise<void> {
+  const existDoctor = await this.doctorModel.findById(id);
+  if (!existDoctor) {
+    throw new HttpException('Doctor not found', HttpStatus.NOT_FOUND);
+  }
+
+  // 1. Delete the doctor document
+  const doctor = await this.doctorModel.findByIdAndDelete(id);
+  if (!doctor) {
+    throw new HttpException('Doctor not found', HttpStatus.NOT_FOUND);
+  }
+
+  // 2. Delete the corresponding user using the linked ObjectId reference
+  if (doctor.user) {
+    await this.userModel.findByIdAndDelete(doctor.user);
+  }
+}
 
 
 async findDoctorProfile(userId: string): Promise<Doctor> {

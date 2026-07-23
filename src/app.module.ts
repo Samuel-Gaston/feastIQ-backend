@@ -23,6 +23,11 @@ import { AuthModule } from './auth/auth.module';
 import { ReportModule } from './report/report.module';
 import { AdminMessageModule } from './adminMessages/adminMessage.module';
 import { doctorPatientMessageModule } from './DoctorPatientMessage/doctorPatient.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ScheduleModule } from '@nestjs/schedule';
+import { HealthLogsModule } from './health-logs/health-logs.module';
+import { AiModule } from './ai/ai.module';
+
 @Module({
   imports: [
        // Load .env globally
@@ -30,7 +35,8 @@ import { doctorPatientMessageModule } from './DoctorPatientMessage/doctorPatient
       isGlobal: true ,
       envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
     }),
-
+  EventEmitterModule.forRoot(),
+    ScheduleModule.forRoot(),
 
  I18nModule.forRoot({
       fallbackLanguage: 'en',
@@ -71,7 +77,9 @@ import { doctorPatientMessageModule } from './DoctorPatientMessage/doctorPatient
     AuthModule,
     ReportModule,
     AdminMessageModule,
-    doctorPatientMessageModule
+    doctorPatientMessageModule,
+    HealthLogsModule,
+    AiModule
 
   ],
   controllers: [AppController],

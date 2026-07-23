@@ -130,16 +130,24 @@ async updatePatient(id: string, dto: any): Promise<Patient> {
 }
 
 
-    async deletePatient(id:string): Promise<void>{
-           const existPatient = await this.patientModel.findById(id)
-        if(!existPatient){
-            throw new HttpException("Patient not found", HttpStatus.NOT_FOUND)
+
+   async deletePatient(id: string): Promise<void> {
+        const existPatient = await this.patientModel.findById(id);
+        if (!existPatient) {
+            throw new HttpException('Patient not found', HttpStatus.NOT_FOUND);
         }
-        const Patient = await this.patientModel.findByIdAndDelete(id);
-        if(!Patient){
-            throw new HttpException("failed to delet patient", HttpStatus.INTERNAL_SERVER_ERROR)
+
+    
+        const patient = await this.patientModel.findByIdAndDelete(id);
+        if (!patient) {
+            throw new HttpException('Failed to delete patient', HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
+
+  
+        if (patient.user) {
+            await this.userModel.findByIdAndDelete(patient.user);
+        }
+   }
 
     
       async findPatientProfile(userId: string): Promise<Patient> {

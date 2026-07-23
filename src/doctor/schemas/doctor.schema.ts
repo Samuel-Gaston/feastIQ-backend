@@ -6,6 +6,7 @@ import { Permission } from "../../roles/schemas/permission.schema";
 import { Document } from "mongoose";
 import { Patient } from "../../patient/schemas/patient.schema";
 
+
 @Schema({timestamps:true})
 export class Doctor extends Document{
     @Prop()

@@ -251,18 +251,22 @@ async login(dto: LoginDto) {
   }
 
 
-  async forgotPassword(dto: ForgotPasswordDto) {
+ async forgotPassword(dto: ForgotPasswordDto) {
     const { email } = dto;
 
     const user = await this.userModel.findOne({ email });
     if (!user) {
-
       return { message: 'If this email exists, a reset link has been sent' };
     }
 
     const resetToken = this.generateResetToken(user._id.toString(), user.email!);
-    const frontendUrl = this.configService.get<string>('FRONTEND_URL');
-    const resetUrl = `${frontendUrl}/auth/reset-password?token=${resetToken}`;
+    
+    // Explicitly fallback to localhost:3000 if FRONTEND_URL is missing
+    const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
+    
+    // Updated to match your frontend route path: /auth/resetPassword
+    const resetUrl = `${frontendUrl}/auth/resetPassword?token=${resetToken}`;
+    
     await this.mailService.sendPasswordReset(user.email!, resetUrl);
 
     return { message: 'If this email exists, a reset link has been sent' };
@@ -299,6 +303,56 @@ async login(dto: LoginDto) {
     return { message: 'Password reset successfully' };
   }
 
+
+  async forgotPasswordMobile(dto: ForgotPasswordDto) {
+    const { email } = dto;
+
+    const user = await this.userModel.findOne({ email });
+    if (!user) {
+      return { message: 'If this email exists, a reset link has been sent' };
+    }
+
+    const resetToken = this.generateResetToken(user._id.toString(), user.email!);
+    
+    // Explicitly target mobile local server or scheme (localhost:8081)
+    const mobileUrl = this.configService.get<string>('MOBILE_FRONTEND_URL') || 'http://localhost:8081';
+    const resetUrl = `${mobileUrl}/auth/ResetPassword?token=${resetToken}`;
+    
+    await this.mailService.sendPasswordReset(user.email!, resetUrl);
+
+    return { message: 'If this email exists, a reset link has been sent' };
+  }
+
+  async resetPasswordMobile(dto: ResetPasswordDto) {
+    const { token, newPassword } = dto;
+
+    let payload: any;
+    try {
+      payload = this.jwtService.verify(token!, {
+        secret: this.configService.get<string>('JWT_RESET_PASSWORD') ||
+          this.configService.get<string>('JWT_ACCESS_SECRET'),
+      });
+    } catch (e) {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
+
+    const user = await this.userModel.findOne({ email: payload.email });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const hashedPassword = await bcrypt.hash(
+      newPassword!,
+      Number(this.configService.get<string>('BCRYPT_SALT_ROUNDS')) || 10,
+    );
+
+    await this.userModel.findByIdAndUpdate(user._id, {
+      password: hashedPassword,
+      $unset: { refreshTokenHash: 1 }, 
+    });
+
+    return { message: 'Password reset successfully' };
+  }
 
 async getProfile(userId: string) {
   // 1. Fetch the user
@@ -347,7 +401,7 @@ async getProfile(userId: string) {
 async updateProfile(userId: string, dto: any): Promise<any> {
   console.log('[updateProfile] userId:', userId, 'dto:', JSON.stringify(dto));
 
-  // 1. Update the User collection (credentials / identity)
+
   await this.userModel.findByIdAndUpdate(userId, {
     name: dto.name,
     email: dto.email

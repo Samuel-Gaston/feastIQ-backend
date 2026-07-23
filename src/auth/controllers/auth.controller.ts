@@ -116,4 +116,22 @@ export class AuthController {
     const message = i18n.t("common.AUTH_PASSWORD_RESET");
     return { data: response, message };
   }
+
+  @Post("mobile/forgot-password")
+  @ApiOperation({ summary: "Send a password reset link for mobile app" })
+  @ApiResponse({ status: 200, description: "mobile reset link sent if email exists" })
+  async forgotPasswordMobile(@Body() dto: ForgotPasswordDto, @I18n() i18n: I18nContext) {
+    const response = await this.authService.forgotPasswordMobile(dto);
+    const message = i18n.t("common.AUTH_FORGOT_PASSWORD_SENT");
+    return { data: response, message };
+  }
+
+  @Post("mobile/reset-password")
+  @ApiOperation({ summary: "Reset password using a reset token for mobile app" })
+  @ApiResponse({ status: 200, description: "password reset successfully for mobile" })
+  async resetPasswordMobile(@Body() dto: ResetPasswordDto, @I18n() i18n: I18nContext) {
+    const response = await this.authService.resetPasswordMobile(dto);
+    const message = i18n.t("common.AUTH_PASSWORD_RESET");
+    return { data: response, message };
+  }
 }

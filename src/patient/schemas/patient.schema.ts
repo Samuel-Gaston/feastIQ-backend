@@ -32,6 +32,11 @@ export class Patient extends Document{
   @Prop({type: Types.ObjectId, ref: 'Doctor'})
   doctor?:Doctor;
 
+  // patient/schemas/patient.schema.ts — add these props to the existing class
+@Prop() age?: number;
+@Prop() bmi?: number;
+@Prop() gender?: string; // 'male' | 'female'
+@Prop({ default: false }) chronicConditionFlag?: boolean;
 
 }
 
