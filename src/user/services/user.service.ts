@@ -24,7 +24,7 @@ export class UserService{
   ){}
 
 async createUser(dto: CreateUserDto): Promise<User> {
-  const { name,email, password,isVerified, isActive, roleId, permissionIds, doctor, patient } = dto;
+  const { name,email, password,isVerified, isActive, roleId, permissionIds, customer } = dto;
 
   const existingUser = await this.userModel.findOne({ email });
   if (existingUser) {
@@ -60,7 +60,7 @@ async createUser(dto: CreateUserDto): Promise<User> {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = new this.userModel({
-    name: doctor?.name || patient?.name || name,
+    name: customer?.name || name,
     email,
     password: hashedPassword,
     isVerified: isVerified ?? false,

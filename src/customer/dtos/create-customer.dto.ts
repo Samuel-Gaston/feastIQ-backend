@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsString, IsEmail, IsOptional, IsNotEmpty, MinLength, MaxLength } from "class-validator";
 
-export class CreatePatientDTO {
+export class CreateCustomerDTO {
   @ApiProperty({ description: 'enter name' })
   @IsString()
   @IsNotEmpty()

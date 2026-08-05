@@ -2,8 +2,7 @@ import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
 import { Document, Types } from "mongoose";
 import { Permission } from "../../roles/schemas/permission.schema";
 import { Role } from "../../roles/schemas/role.schema";
-import { Doctor } from "../../doctor/schemas/doctor.schema";
-import { Patient } from "../../patient/schemas/patient.schema";
+import { Customer } from "../../customer/schemas/customer.schema";
 
 @Schema({timestamps:true})
 export class User extends Document{
@@ -28,11 +27,9 @@ export class User extends Document{
     @Prop({ type: Types.ObjectId, ref: 'Role' })
     roles?: Role;
 
-    @Prop({ type: Types.ObjectId, ref: 'Doctor' })
-    doctors?: Doctor;
 
-    @Prop({ type: Types.ObjectId, ref: 'Patient' })
-    patients?: Patient;
+    @Prop({ type: Types.ObjectId, ref: 'Customer' })
+    customers?: Customer;
 
     @Prop() 
     refreshTokenHash?: string;

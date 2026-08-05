@@ -1,6 +1,5 @@
 import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
-import { Doctor } from "../../doctor/schemas/doctor.schema";
-import { Patient } from "../../patient/schemas/patient.schema";
+import { Customer } from "../../customer/schemas/customer.schema";
 import { IsOptional } from "class-validator";
 
 export class CreateUserDto{
@@ -29,13 +28,10 @@ export class CreateUserDto{
     @IsOptional()
     permissionIds?:string[];
 
-    @ApiPropertyOptional({description:'the doctor name'})
-    @IsOptional()
-    doctor?:Doctor;
 
-    @ApiPropertyOptional({description:"the patient name"})
+    @ApiPropertyOptional({description:"the customer name"})
     @IsOptional()
-    patient?:Patient;
+    customer?:Customer;
 
 
 

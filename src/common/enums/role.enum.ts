@@ -1,6 +1,6 @@
 export enum RoleEnum{
-   PATIENT = "PATIENT",
-   DOCTOR = "DOCTOR",
+   CUSTOMER = "CUSTOMER",
+   RESTAURANT = "RESTAURANT",
    ADMIN = "ADMIN",
    SUPER_ADMIN = "SUPER_ADMIN"
 }

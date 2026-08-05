@@ -3,7 +3,7 @@ import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagg
 import { I18n, I18nContext } from "nestjs-i18n";
 import { AuthService } from "../services/auth.service";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
-import { CreatePatientDTO } from "../../patient/dtos/create-patient.dto";
+import { CreateCustomerDTO } from "../../customer/dtos/create-customer.dto";
 import { LoginDto } from "../dtos/login.dto";
 import { RefreshTokenDto } from "../dtos/refresh-token.dto";
 import { ForgotPasswordDto, ResetPasswordDto } from "../dtos/reset-password.dto";
@@ -11,7 +11,7 @@ import { CurrentUser } from "../../common/decorators/current-user.decorator";
 import { User } from "../../user/schemas/user.schema";
 import { UpdateUserDto } from "../../user/dtos/update-user.dto";
 import { Patch } from "@nestjs/common";
-import { UpdatePatientDTO } from "../../patient/dtos/update-patient.dto";
+import { UpdateCustomerDTO } from "../../customer/dtos/update-customer.dto";
 
 
 @ApiTags("Auth")
@@ -29,7 +29,7 @@ export class AuthController {
   @Post("register")
   @ApiOperation({ summary: "Patient self-registration" })
   @ApiResponse({ status: 200, description: "registration successful" })
-  async register(@Body() dto: CreatePatientDTO, @I18n() i18n: I18nContext) {
+  async register(@Body() dto: CreateCustomerDTO, @I18n() i18n: I18nContext) {
     const response = await this.authService.register(dto);
     const message = i18n.t("common.AUTH_REGISTER");
     return { data: response, message };
@@ -59,7 +59,7 @@ export class AuthController {
     @UseGuards(JwtAuthGuard)
       async updateMyPatientProfile(
       @CurrentUser() user: User,
-      @Body() dto:UpdatePatientDTO,
+      @Body() dto:UpdateCustomerDTO,
       @I18n() i18n:I18nContext
       ){
          const response = await this.authService.updateProfile(user._id.toString(), dto)

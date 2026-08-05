@@ -6,29 +6,22 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { I18nModule, I18nJsonLoader, AcceptLanguageResolver } from 'nestjs-i18n';
 import * as path from 'path';
 import { RolesModule } from './roles/roles.module';
-import { DoctorModule } from './doctor/doctor.module';
-import { PatientModule } from './patient/patient.module';
+import { CustomerModule } from './customer/customer.module';
 import { UserModule } from './user/user.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { mailConfig } from './config/mail.config';
-import { NotificationModule } from './notification/notification.module';
-import { ReviewModule } from './reviews/review.module';
 import { MailModule } from './common/mail/mail.module';
 import {AdminModule} from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
-import { EventEmitterModule } from '@nestjs/event-emitter';
-import { ScheduleModule } from '@nestjs/schedule';
+
 
 
 @Module({
   imports: [
-       // Load .env globally
     ConfigModule.forRoot({ 
       isGlobal: true ,
       envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
     }),
-  EventEmitterModule.forRoot(),
-    ScheduleModule.forRoot(),
 
  I18nModule.forRoot({
       fallbackLanguage: 'en',
@@ -56,10 +49,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 
     RolesModule,
     UserModule,
-    PatientModule,
-    DoctorModule,
-    NotificationModule,
-    ReviewModule,
+    CustomerModule,
     MailModule,
     AdminModule,
     AuthModule,

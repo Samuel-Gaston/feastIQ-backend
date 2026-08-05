@@ -5,11 +5,11 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { User } from '../../user/schemas/user.schema';
-import { Patient } from '../../patient/schemas/patient.schema';
+import { Customer } from '../../customer/schemas/customer.schema';
 import { Role } from '../../roles/schemas/role.schema';
 import { RoleEnum } from '../../common/enums/role.enum';
 import { MailService } from '../../common/mail/mail.service';
-import { CreatePatientDTO } from '../../patient/dtos/create-patient.dto';
+import { CreateCustomerDTO } from '../../customer/dtos/create-customer.dto';
 import { LoginDto } from '../dtos/login.dto';
 import { ForgotPasswordDto, ResetPasswordDto } from '../dtos/reset-password.dto';
 import { Logger } from '@nestjs/common';
@@ -20,7 +20,7 @@ export class AuthService {
   private readonly logger = new Logger(AuthService.name);
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
-    @InjectModel(Patient.name) private readonly patientModel: Model<Patient>,
+    @InjectModel(Customer.name) private readonly customerModel: Model<Customer>,
     @InjectModel(Role.name) private readonly roleModel: Model<Role>,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
@@ -31,11 +31,10 @@ export class AuthService {
   const payload = {
     sub: user._id.toString(),
     email: user.email ?? '',
-    role: roleName ?? 'PATIENT',
+    role: roleName ?? 'customer',
   };
 
-  // 👈 Explicitly pass the secret directly here to guarantee token signing values!
-  return this.jwtService.sign(payload, {
+ return this.jwtService.sign(payload, {
     secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
     expiresIn: '15m',
   });
@@ -43,7 +42,7 @@ export class AuthService {
 
 
 
-// ... inside your class
+
 private generateRefreshToken(user: User & { _id: Types.ObjectId }): string {
   const payload = {
     sub: user._id.toString(),
@@ -51,8 +50,7 @@ private generateRefreshToken(user: User & { _id: Types.ObjectId }): string {
   };
   
   const secret = this.configService.get<string>('JWT_REFRESH_SECRET')!;
-  
-  // Cast the config result to 'any' to bypass the strict index.d.ts validation
+ 
   const expiresIn = (this.configService.get<string>('JWT_REFRESH_EXPIRY') || '7d') as any;
 
   const signOptions: JwtSignOptions = {
@@ -79,21 +77,21 @@ private generateResetToken(userId: string, email: string): string {
 }
 
 
-  async register(dto: CreatePatientDTO) {
+  async register(dto: CreateCustomerDTO) {
     const { name, email, address, phone, password } = dto;
 
-    const existingEmail = await this.patientModel.findOne({ email });
+    const existingEmail = await this.customerModel.findOne({ email });
     if (existingEmail) {
-      throw new ConflictException('Patient with this email already exists');
+      throw new ConflictException('customer with this email already exists');
     }
 
     if (!password) {
       throw new BadRequestException('Password is required');
     }
 
-    const patientRole = await this.roleModel.findOne({ name: RoleEnum.PATIENT });
-    if (!patientRole) {
-      throw new NotFoundException('Patient role not found');
+    const customerRole = await this.roleModel.findOne({ name: RoleEnum.CUSTOMER });
+    if (!customerRole) {
+      throw new NotFoundException('customer role not found');
     }
 
     const hashedPassword = await bcrypt.hash(
@@ -107,21 +105,21 @@ private generateResetToken(userId: string, email: string): string {
       password: hashedPassword,
       isVerified: true,
       isActive: true, 
-      roles: patientRole._id,
+      roles: customerRole._id,
     });
 
-    const patient = await this.patientModel.create({
+    const customer = await this.customerModel.create({
       name,
       email,
       address,
       phone,
-      role: patientRole._id,
+      role: customerRole._id,
       user: user._id,
     });
 
-    await patient.populate({ path: 'user', populate: { path: 'roles' } });
+    await customer.populate({ path: 'user', populate: { path: 'roles' } });
 
-    await this.mailService.sendPatientWelcomeEmail({
+    await this.mailService.sendCustomerWelcomeEmail({
       to: email!,
       name: name!,
       email: email!,
@@ -130,12 +128,12 @@ private generateResetToken(userId: string, email: string): string {
 
     return {
       message: 'Registration successful. You can now log in.',
-      patient: {
-        id: patient._id,
-        name: patient.name,
-        email: patient.email,
-        phone: patient.phone,
-        address: patient.address,
+      customer: {
+        id: customer._id,
+        name: customer.name,
+        email: customer.email,
+        phone: customer.phone,
+        address: customer.address,
       },
     };
   }
@@ -146,7 +144,6 @@ async login(dto: LoginDto) {
 
   const user = await this.userModel.findOne({ email }).populate('roles');
   
-  // LOGGING: Helps pinpoint exactly which condition fails
   if (!user) {
     this.logger.warn(`Login failed: No user found for ${email}`);
     throw new UnauthorizedException('Invalid email or password');
@@ -162,7 +159,6 @@ async login(dto: LoginDto) {
     throw new UnauthorizedException('Please verify your account first');
   }
 
-  // Use the same hashing library consistently (recommend switching all to 'bcrypt')
   const isPasswordValid = await bcrypt.compare(password!, user.password!);
   if (!isPasswordValid) {
     this.logger.warn(`Login failed: Password mismatch for ${email}`);
@@ -173,7 +169,6 @@ async login(dto: LoginDto) {
   const accessToken = this.generateAccessToken(user as any, roleName);
   const refreshToken = this.generateRefreshToken(user as any);
 
-  // Use the same bcrypt library for the refresh hash
   const refreshTokenHash = await bcrypt.hash(refreshToken, 10);
   await this.userModel.findByIdAndUpdate(user._id, { refreshTokenHash });
 
@@ -364,39 +359,18 @@ async getProfile(userId: string) {
 
   if (!user) throw new NotFoundException('User not found');
 
-  // 2. Fetch the patient using the user ID reference
-  const patient = await this.patientModel.findOne({ user: new Types.ObjectId(userId) }).lean();
+  // 2. Fetch the customer using the user ID reference
+  const customer = await this.customerModel.findOne({ user: new Types.ObjectId(userId) }).lean();
 
   // 3. Return a merged object
   return {
     ...user,
-    phone: patient?.phone || '',
-    address: patient?.address || '',
+    phone: customer?.phone || '',
+    address: customer?.address || '',
   };
 }
 
 
-// async updateProfile(userId: string, dto: any): Promise<any> {
-//   // 1. Update User name/email
-//   await this.userModel.findByIdAndUpdate(userId, {
-//     name: dto.name,
-//     email: dto.email
-//   }).exec();
-
-//   // 2. Update Patient phone/address (Use user reference)
-//   const patient = await this.patientModel.findOneAndUpdate(
-//     { user: new Types.ObjectId(userId) },
-//     { 
-//       $set: { 
-//         phone: dto.phone, 
-//         address: dto.address 
-//       } 
-//     },
-//     { new: true, upsert: true }
-//   ).exec();
-
-//   return patient.toObject();
-// }
 
 async updateProfile(userId: string, dto: any): Promise<any> {
   console.log('[updateProfile] userId:', userId, 'dto:', JSON.stringify(dto));
@@ -407,10 +381,9 @@ async updateProfile(userId: string, dto: any): Promise<any> {
     email: dto.email
   }, { new: true }).exec();
 
-  // 2. Update the Patient collection (since Patient also stores name, email, phone, address)
   const userObjectId = new Types.ObjectId(userId);
 
-  const patient = await this.patientModel.findOneAndUpdate(
+  const customer = await this.customerModel.findOneAndUpdate(
     { user: userObjectId },
     { 
       $set: { 
@@ -423,12 +396,12 @@ async updateProfile(userId: string, dto: any): Promise<any> {
     { new: true, upsert: true }
   ).exec();
 
-  console.log('[updateProfile] matched/updated patient:', patient?._id?.toString());
+  console.log('[updateProfile] matched/updated customer:', customer?._id?.toString());
 
-  if (!patient) {
-    throw new Error('Patient profile not found');
+  if (!customer) {
+    throw new Error('customer profile not found');
   }
 
-  return patient.toObject();
+  return customer.toObject();
 }
 }
