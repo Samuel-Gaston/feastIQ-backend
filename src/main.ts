@@ -8,8 +8,8 @@ async function bootstrap() {
   app.enableCors()
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('MediTrack API')
-    .setDescription('The MediTrack API description')
+    .setTitle('FoodHub API')
+    .setDescription('The FoodHub API description')
     .setVersion('1.0')
     .addBearerAuth() 
     .build();

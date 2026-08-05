@@ -58,27 +58,6 @@
   "AUTH_FORGOT_PASSWORD_SENT": "Si cet e-mail existe, un lien de réinitialisation a été envoyé",
   "AUTH_PASSWORD_RESET": "Mot de passe réinitialisé avec succès",
 
-  "APPOINTMENT_CREATED": "Rendez-vous créé avec succès",
-  "DOCTOR_APPOINTMENTS_FETCHED": "Rendez-vous du médecin récupérés avec succès",
-  "APPOINTMENTS_FETCHED": "Rendez-vous récupérés avec succès",
-  "APPOINTMENT_FETCHED": "Rendez-vous récupéré avec succès",
-  "APPOINTMENT_UPDATED": "Rendez-vous mis à jour avec succès",
-  "APPOINTMENT_DELETED": "Rendez-vous supprimé avec succès",
-
-  "PRESCRIPTION_CREATE": "Ordonnance créée avec succès",
-  "PRESCRIPTION_PATIENT_READ": "Ordonnances du patient récupérées avec succès",
-  "PRESCRIPTION_READ_ONE": "Ordonnance récupérée avec succès",
-  "PRESCRIPTION_READ_ALL": "Ordonnances récupérées avec succès",
-  "PRESCRIPTION_UPDATE": "Ordonnance mise à jour avec succès",
-  "PRESCRIPTION_DELETE": "Ordonnance supprimée avec succès",
-
-  "MEDICATION_CREATE": "Médicament créé avec succès",
-  "MEDICATION_PATIENT_READ": "Médicaments du patient récupérés avec succès",
-  "MEDICATION_READ_ONE": "Médicament récupéré avec succès",
-  "MEDICATION_READ_ALL": "Tous les médicaments ont été récupérés avec succès",
-  "MEDICATION_UPDATE": "Médicament mis à jour avec succès",
-  "MEDICATION_DELETE": "Médicament supprimé avec succès",
-
   "REVIEW_CREATE": "Avis créé avec succès",
   "REVIEW_GET_PATIENT": "Avis du patient récupérés avec succès",
   "REVIEW_GET_DOCTOR": "Avis du médecin récupérés avec succès",

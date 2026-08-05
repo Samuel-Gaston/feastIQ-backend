@@ -11,22 +11,14 @@ import { PatientModule } from './patient/patient.module';
 import { UserModule } from './user/user.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { mailConfig } from './config/mail.config';
-import { AppoinmentModule } from './appointment/appointment.module';
-import { PrescriptionModule } from './prescription/prescription.module';
 import { NotificationModule } from './notification/notification.module';
-import { MedicationModule } from './medications/medication.module';
 import { ReviewModule } from './reviews/review.module';
 import { MailModule } from './common/mail/mail.module';
 import {AdminModule} from './admin/admin.module';
-import {ConsultationModule} from './consultation/consultation.module';
 import { AuthModule } from './auth/auth.module';
-import { ReportModule } from './report/report.module';
-import { AdminMessageModule } from './adminMessages/adminMessage.module';
-import { doctorPatientMessageModule } from './DoctorPatientMessage/doctorPatient.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
-import { HealthLogsModule } from './health-logs/health-logs.module';
-import { AiModule } from './ai/ai.module';
+
 
 @Module({
   imports: [
@@ -66,20 +58,11 @@ import { AiModule } from './ai/ai.module';
     UserModule,
     PatientModule,
     DoctorModule,
-    AppoinmentModule,
-    ConsultationModule,
-    PrescriptionModule,
-    MedicationModule,
     NotificationModule,
     ReviewModule,
     MailModule,
     AdminModule,
     AuthModule,
-    ReportModule,
-    AdminMessageModule,
-    doctorPatientMessageModule,
-    HealthLogsModule,
-    AiModule
 
   ],
   controllers: [AppController],
