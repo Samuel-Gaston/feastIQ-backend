@@ -17,7 +17,7 @@ export class MailService {
     });
   }
 
-  async sendDoctorWelcomeEmail(params: {
+  async sendRestaurantWelcomeEmail(params: {
     to: string;
     name: string;
     email: string;

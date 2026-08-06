@@ -3,6 +3,8 @@ import { Document, Types } from "mongoose";
 import { Permission } from "../../roles/schemas/permission.schema";
 import { Role } from "../../roles/schemas/role.schema";
 import { Customer } from "../../customer/schemas/customer.schema";
+import { Restaurant } from "../../restaurant/schema/restaurant.schema";
+
 
 @Schema({timestamps:true})
 export class User extends Document{
@@ -29,7 +31,10 @@ export class User extends Document{
 
 
     @Prop({ type: Types.ObjectId, ref: 'Customer' })
-    customers?: Customer;
+    customer?: Customer;
+
+    @Prop({type: Types.ObjectId, ref: 'Restaurant'})
+    restaurant?:Restaurant
 
     @Prop() 
     refreshTokenHash?: string;

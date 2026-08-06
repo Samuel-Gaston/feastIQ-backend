@@ -7,6 +7,7 @@ import {Permission} from '../../roles/schemas/permission.schema';
 import {UpdateUserDto} from '../../user/dtos/update-user.dto';
 import * as bcrypt from 'bcryptjs';
 
+
 @Injectable()
 export class AdminService implements OnApplicationBootstrap {
   private readonly logger = new Logger(AdminService.name);

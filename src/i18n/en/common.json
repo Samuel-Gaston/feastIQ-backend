@@ -23,23 +23,25 @@
   "INACTIVE_USER_ASSIGN": "Cannot assign permissions to an inactive user",
   "SYSTEM_ROLE_MODIFY": "System role permissions cannot be modified",
 
-  "PATIENT_CREATED": "Patient created successfully",
-  "PATIENT_READ": "Patients fetched successfully",
-  "PATIENT_READ_ONE": "Patient fetched successfully",
-  "PATIENT_UPDATE": "Patient updated successfully",
-  "PATIENT_DELETED": "Patient deleted successfully",
-  "READ_PATIENT_PROFILE": "Patient profile retrieved successfully",
-  "UPDATE_PATIENT_PROFILE": "Patient profile updated successfully",
-  "PATIENT_ASSIGN_TO_DOCTOR": "Patient assigned to doctor successfully",
+  "CUSTOMER_CREATED": "Customer created successfully",
+  "CUSTOMER_READ": "Customers fetched successfully",
+  "CUSTOMER_READ_ONE": "Customer fetched successfully",
+  "CUSTOMER_UPDATE": "Customer updated successfully",
+  "CUSTOMER_DELETED": "Customer deleted successfully",
+  "READ_CUSTOMER_PROFILE": "Customer profile retrieved successfully",
+  "UPDATE_CUSTOMER_PROFILE": "Customer profile updated successfully",
+  
+  
+  "RESTAURANT_CREATED": "Restaurant created successfully",
+  "RESTAURANT_READ": "Restaurants fetched successfully",
+  "RESTAURANT_READ_ONE": "Restaurant fetched successfully",
+  "RESTAURANT_UPDATE": "Restaurant updated successfully",
+  "RESTAURANT_DELETED": "Restaurant deleted successfully",
+  "READ_RESTAURANT_PROFILE": "Restaurant profile retrieved successfully",
+  "UPDATE_RESTAURANT_PROFILE": "Restaurant profile updated successfully",
+  "RESTAURANT_ASSIGN_TO_DOCTOR": "Restaurant assigned to doctor successfully",
 
-  "DOCTOR_CREATED": "Doctor created successfully",
-  "DOCTOR_READ": "Doctors fetched successfully",
-  "DOCTOR_READ_ONE": "Doctor fetched successfully",
-  "DOCTOR_UPDATE": "Doctor updated successfully",
-  "DOCTOR_DELETED": "Doctor deleted successfully",
-  "READ_DOCTOR_PROFILE": "Doctor profile retrieved successfully",
-  "UPDATED_DOCTOR_PROFILE": "Doctor profile updated successfully",
-  "PATIENT_LINKED_TO_DOCTOR": "Patients linked to doctor fetched successfully",
+
 
   "USER_CREATE": "User created successfully",
   "USER_READ": "Users retrieved successfully",
@@ -57,6 +59,13 @@
   "AUTH_EMAIL_VERIFIED": "Email verified successfully",
   "AUTH_FORGOT_PASSWORD_SENT": "If that email exists, a reset link has been sent",
   "AUTH_PASSWORD_RESET": "Password reset successfully",
+
+
+  "MENU_ITEM_CREATED": "Menu item created successfully",
+"MENU_ITEM_READ": "Menu items fetched successfully",
+"MENU_ITEM_READ_ONE": "Menu item fetched successfully",
+"MENU_ITEM_UPDATE": "Menu item updated successfully",
+"MENU_ITEM_DELETED": "Menu item deleted successfully",
 
   "REVIEW_CREATE": "Review created successfully",
   "REVIEW_GET_PATIENT": "Patient reviews retrieved successfully",

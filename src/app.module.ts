@@ -13,6 +13,8 @@ import { mailConfig } from './config/mail.config';
 import { MailModule } from './common/mail/mail.module';
 import {AdminModule} from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
+import { RestaurantModule } from './restaurant/restaurant.module';
+import { MenuItemModule } from './menus/menu-item.module';
 
 
 
@@ -50,9 +52,11 @@ import { AuthModule } from './auth/auth.module';
     RolesModule,
     UserModule,
     CustomerModule,
+    RestaurantModule,
+    AuthModule,
+    MenuItemModule,
     MailModule,
     AdminModule,
-    AuthModule,
 
   ],
   controllers: [AppController],
