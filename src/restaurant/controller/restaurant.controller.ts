@@ -18,6 +18,7 @@ import { UpdateRestaurantDTO } from "../dto/update-restaurant.dto";
 import { UpdateRestaurantStatusDTO } from "../dto/update-restaurant-status.dto";
 
 
+
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('Restaurants')
 @ApiResponse({status:404, description:'NOT FOUND'})
