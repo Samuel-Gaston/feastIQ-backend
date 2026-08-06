@@ -1,98 +1,116 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+<div align="center">
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# FeastIQ — Backend API
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+**The core NestJS REST API + WebSocket gateway powering the FeastIQ food ordering marketplace.**
 
-## Description
+Handles authentication, restaurants, menus, cart, orders, reviews, notifications, and admin operations — and acts as the sole integration point between the platform and the AI/ML service.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+[![NestJS](https://img.shields.io/badge/Framework-NestJS-E0234E?logo=nestjs&logoColor=white)](https://nestjs.com/)
+[![TypeScript](https://img.shields.io/badge/Language-TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Socket.io](https://img.shields.io/badge/Realtime-Socket.io-010101?logo=socket.io&logoColor=white)](https://socket.io/)
+[![Swagger](https://img.shields.io/badge/Docs-Swagger-85EA2D?logo=swagger&logoColor=black)](https://swagger.io/)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](#license)
 
-## Project setup
+[Web Frontend →](https://github.com/Samuel-Gaston/feastIQ-web-frontend) · [Mobile Frontend →](https://github.com/Samuel-Gaston/feastIQ-mobile-frontend) 
 
-```bash
-$ npm install
+</div>
+
+---
+
+## About This Repository
+
+This is the **backend API** for [FeastIQ](#) — an AI-powered, multi-restaurant food ordering marketplace. It's built with NestJS for its modularity, built-in dependency injection, decorator-driven validation, and auto-generated Swagger documentation — well suited to a system with three distinct user roles (Customer, Restaurant Owner, Admin) and strict role-based data isolation.
+
+This service owns all core business logic. AI/ML capabilities (recommendations, food image classification, and the LLM ordering assistant) are deliberately kept in a **separate Python/FastAPI microservice**, reached only through this API's `AI Gateway` module — keeping the ML stack independently deployable and the platform resilient if the AI service is ever degraded.
+
+---
+
+##  What This API Does
+
+-  **Auth** — JWT access/refresh tokens, three roles (customer, restaurant_owner, admin), guarded routes
+-  **Restaurants & Menus** — owner-managed restaurant profiles, category-based menu items, bulk CSV import, admin approval workflow
+-  **Cart & Checkout** — restaurant-scoped cart, delivery fee calculation, Cash-on-Delivery checkout behind a swappable `PaymentStrategy` interface
+-  **Orders** — full status lifecycle (`placed → confirmed → preparing → ready_for_pickup → out_for_delivery → delivered`), live updates via WebSocket
+-  **Reviews** — post-delivery ratings with restaurant owner responses
+-  **Notifications** — push (FCM), email, and in-app notification centre, plus admin broadcast messaging
+-  **Admin** — user management, role/permission assignment, restaurant approvals, platform analytics, audit logging
+-  **AI Gateway** — the only module that talks to the FastAPI AI service (`/recommend`, `/classify-food`, `/assistant`), with graceful fallback if that service is unavailable
+
+---
+
+##  Architecture Snapshot
+
+```
+Client (Web/Mobile)
+        │
+        ▼
+┌───────────────────────┐
+│      NestJS API        │
+│  ┌───────────────────┐ │
+│  │  Auth · Users       │ │
+│  │  Restaurants · Menu │ │
+│  │  Cart · Orders       │ │
+│  │  Reviews · Notifs    │ │
+│  │  Admin               │ │──────► FastAPI AI Service
+│  │  AI Gateway  ────────┼─┼──────► (Recommendation ·
+│  └───────────────────┘ │        Image Classifier ·
+└──────────┬─────────────┘        LLM Assistant/Groq)
+           │
+           ▼
+   MongoDB Atlas
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## Tech Stack
 
-# watch mode
-$ npm run start:dev
+| Layer | Technology |
+|---|---|
+| Framework | NestJS (Node.js, TypeScript) |
+| Auth | Passport.js, JWT (access + refresh), Bcrypt |
+| Database | MongoDB Atlas via Mongoose ODM |
+| Validation | class-validator, class-transformer |
+| Docs | Swagger / OpenAPI (auto-generated) |
+| Media | Cloudinary |
+| Notifications | Firebase Cloud Messaging, Nodemailer |
+| Testing | Jest |
+| CI/CD | GitHub Actions |
 
-# production mode
-$ npm run start:prod
-```
+---
 
-## Run tests
 
-```bash
-# unit tests
-$ npm run test
+##  Getting Started
 
-# e2e tests
-$ npm run test:e2e
+### Prerequisites
+- Node.js ≥ 18
+- MongoDB Atlas connection string (or local MongoDB)
+- Cloudinary account (media uploads)
 
-# test coverage
-$ npm run test:cov
-```
 
-## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+##  API Documentation
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+Interactive Swagger documentation is auto-generated from decorators once the server is running. Every endpoint is grouped by module (Auth, Restaurants, Menu Items, Cart, Orders, Reviews, Notifications, Admin, AI Gateway) with request/response schemas.
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## Related Repositories
 
-Check out a few resources that may come in handy when working with NestJS:
+| Repo | Description |
+|---|---|
+| `feastIQ-web-frontend` | Next.js web app — restaurant owner dashboard, admin dashboard |
+| `feastIQ-mobile-frontend` | React Native (Expo) customer mobile app |
+| `feastIQ-ai-service` | Python/FastAPI AI microservice — recommendation engine, food image classifier, Groq-powered assistant |
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+##  Author
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+**Samuel Gaston** —Software Engineer
 
-## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+</div>
