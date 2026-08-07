@@ -11,7 +11,9 @@ import * as bcrypt from 'bcrypt'
 import { RestaurantStatusEnum } from "../../common/enums/restaurant.status";
 import { MailService } from "../../common/mail/mail.service";
 import { Types } from "mongoose";
-
+import { NotificationService } from "../../notification/service/notification.service";
+import { NotificationTypeEnum } from "../../common/enums/notification-type.enum";
+import { AuditLogService } from "../../audit-log/service/audit-log.service";
 
 @Injectable()
 export class RestaurantService{
@@ -25,7 +27,10 @@ export class RestaurantService{
         @InjectModel(Role.name)
         private readonly roleModel: Model<Role>,
 
-        private readonly mailService: MailService
+        private readonly mailService: MailService,
+
+        private readonly notificationService: NotificationService,
+        private readonly auditLogService: AuditLogService
     ){}
 
 
@@ -189,7 +194,7 @@ export class RestaurantService{
       return Restaurant.toObject() as Restaurant;
     }
 
-    async updateRestaurantStatus(id: string, status: RestaurantStatusEnum): Promise<Restaurant> {
+   async updateRestaurantStatus(id: string, status: RestaurantStatusEnum, adminId: string): Promise<Restaurant> {
       const existRestaurant = await this.restaurantModel.findById(id);
       if (!existRestaurant) {
         throw new HttpException('Restaurant not found', HttpStatus.NOT_FOUND);
@@ -202,6 +207,16 @@ export class RestaurantService{
       if (!Restaurant) {
         throw new HttpException('Failed to update restaurant status', HttpStatus.INTERNAL_SERVER_ERROR);
       }
+
+      if(Restaurant.user){
+        const title = status === RestaurantStatusEnum.APPROVED ? "Restaurant approved" : "Restaurant suspended"
+        const body = status === RestaurantStatusEnum.APPROVED
+          ? "Your restaurant has been approved and is now visible to customers"
+          : "Your restaurant has been suspended"
+        await this.notificationService.send(Restaurant.user.toString(), title, body, NotificationTypeEnum.SYSTEM)
+      }
+
+      await this.auditLogService.log(adminId, "ADMIN", `RESTAURANT_STATUS_${status}`, id)
 
       return Restaurant;
     }

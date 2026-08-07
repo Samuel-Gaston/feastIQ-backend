@@ -8,8 +8,8 @@ async function bootstrap() {
   app.enableCors()
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('FoodHub API')
-    .setDescription('The FoodHub API description')
+    .setTitle('FeastIQ API')
+    .setDescription('The FeastIQ API (The Intelligent Restaurant & Food Ordering Platform)')
     .setVersion('1.0')
     .addBearerAuth() 
     .build();

@@ -32,22 +32,6 @@
   "UPDATE_CUSTOMER_PROFILE": "Profil du Client mis à jour avec succès",
 
   
-  "RESTAURANT_CREATED": "Restaurant créé avec succès",
-  "RESTAURANT_READ": "Restaurants récupérés avec succès",
-  "RESTAURANT_READ_ONE": "Restaurant récupéré avec succès",
-  "RESTAURANT_UPDATE": "Restaurant mis à jour avec succès",
-  "RESTAURANT_DELETED": "Restaurant supprimé avec succès",
-  "READ_RESTAURANT_PROFILE": "Profil du Restaurant récupéré avec succès",
-  "UPDATE_RESTAURANT_PROFILE": "Profil du Restaurant mis à jour avec succès",
- "RESTAURANT_ASSIGN_TO_DOCTOR": "Restaurant assigné au médecin avec succès",
-
- "MENU_ITEM_CREATED": "Plat créé avec succès",
-"MENU_ITEM_READ": "Plats récupérés avec succès",
-"MENU_ITEM_READ_ONE": "Plat récupéré avec succès",
-"MENU_ITEM_UPDATE": "Plat mis à jour avec succès",
-"MENU_ITEM_DELETED": "Plat supprimé avec succès",
-
-
   "USER_CREATE": "Utilisateur créé avec succès",
   "USER_READ": "Utilisateurs récupérés avec succès",
   "USER_READ_ONE": "Utilisateur récupéré avec succès",
@@ -65,12 +49,49 @@
   "AUTH_FORGOT_PASSWORD_SENT": "Si cet e-mail existe, un lien de réinitialisation a été envoyé",
   "AUTH_PASSWORD_RESET": "Mot de passe réinitialisé avec succès",
 
-  "REVIEW_CREATE": "Avis créé avec succès",
-  "REVIEW_GET_PATIENT": "Avis du patient récupérés avec succès",
-  "REVIEW_GET_DOCTOR": "Avis du médecin récupérés avec succès",
-  "REVIEW_GET_ONE": "Avis récupéré avec succès",
-  "REVIEW_UPDATE": "Avis mis à jour avec succès",
-  "REVIEW_DELETE": "Avis supprimé avec succès"
+  
+  "RESTAURANT_CREATED": "Restaurant créé avec succès",
+  "RESTAURANT_READ": "Restaurants récupérés avec succès",
+  "RESTAURANT_READ_ONE": "Restaurant récupéré avec succès",
+  "RESTAURANT_UPDATE": "Restaurant mis à jour avec succès",
+  "RESTAURANT_DELETED": "Restaurant supprimé avec succès",
+  "READ_RESTAURANT_PROFILE": "Profil du Restaurant récupéré avec succès",
+  "UPDATE_RESTAURANT_PROFILE": "Profil du Restaurant mis à jour avec succès",
+ "RESTAURANT_ASSIGN_TO_DOCTOR": "Restaurant assigné au médecin avec succès",
+
+ "MENU_ITEM_CREATED": "Plat créé avec succès",
+"MENU_ITEM_READ": "Plats récupérés avec succès",
+"MENU_ITEM_READ_ONE": "Plat récupéré avec succès",
+"MENU_ITEM_UPDATE": "Plat mis à jour avec succès",
+"MENU_ITEM_DELETED": "Plat supprimé avec succès",
+
+"CART_READ": "Panier récupéré avec succès",
+"CART_ITEM_ADDED": "Article ajouté au panier avec succès",
+"CART_ITEM_UPDATED": "Article du panier mis à jour avec succès",
+"CART_ITEM_REMOVED": "Article retiré du panier avec succès",
+"CART_CLEARED": "Panier vidé avec succès",
+
+"ORDER_CREATED": "Commande passée avec succès",
+"ORDER_READ": "Commandes récupérées avec succès",
+"ORDER_READ_ONE": "Commande récupérée avec succès",
+"ORDER_UPDATE": "Statut de la commande mis à jour avec succès",
+"ORDER_CANCELLED": "Commande annulée avec succès",
+
+ "REVIEW_CREATED": "Avis soumis avec succès",
+"REVIEW_READ": "Avis récupérés avec succès",
+"REVIEW_RESPONSE_ADDED": "Réponse soumise avec succès",
+
+"NOTIFICATION_READ": "Notifications récupérées avec succès",
+"NOTIFICATION_READ_ONE": "Notification marquée comme lue",
+"NOTIFICATION_READ_ALL": "Toutes les notifications ont été marquées comme lues",
+"NOTIFICATION_BROADCAST_SENT": "Diffusion envoyée avec succès",
+
+"AUDIT_LOG_READ": "Journaux d'audit récupérés avec succès",
+
+"CHAT_REPLY_GENERATED": "Réponse générée avec succès",
+"CHAT_HISTORY_READ": "Historique de discussion récupéré avec succès",
+
+"ADMIN_ANALYTICS_READ": "Statistiques récupérées avec succès"
 
 
 

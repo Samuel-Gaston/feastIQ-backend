@@ -30,20 +30,9 @@
   "CUSTOMER_DELETED": "Customer deleted successfully",
   "READ_CUSTOMER_PROFILE": "Customer profile retrieved successfully",
   "UPDATE_CUSTOMER_PROFILE": "Customer profile updated successfully",
-  
-  
-  "RESTAURANT_CREATED": "Restaurant created successfully",
-  "RESTAURANT_READ": "Restaurants fetched successfully",
-  "RESTAURANT_READ_ONE": "Restaurant fetched successfully",
-  "RESTAURANT_UPDATE": "Restaurant updated successfully",
-  "RESTAURANT_DELETED": "Restaurant deleted successfully",
-  "READ_RESTAURANT_PROFILE": "Restaurant profile retrieved successfully",
-  "UPDATE_RESTAURANT_PROFILE": "Restaurant profile updated successfully",
-  "RESTAURANT_ASSIGN_TO_DOCTOR": "Restaurant assigned to doctor successfully",
 
 
-
-  "USER_CREATE": "User created successfully",
+    "USER_CREATE": "User created successfully",
   "USER_READ": "Users retrieved successfully",
   "USER_READ_ONE": "User retrieved successfully",
   "USER_READ_EMAIL": "User found successfully by email",
@@ -59,6 +48,16 @@
   "AUTH_EMAIL_VERIFIED": "Email verified successfully",
   "AUTH_FORGOT_PASSWORD_SENT": "If that email exists, a reset link has been sent",
   "AUTH_PASSWORD_RESET": "Password reset successfully",
+  
+  
+  "RESTAURANT_CREATED": "Restaurant created successfully",
+  "RESTAURANT_READ": "Restaurants fetched successfully",
+  "RESTAURANT_READ_ONE": "Restaurant fetched successfully",
+  "RESTAURANT_UPDATE": "Restaurant updated successfully",
+  "RESTAURANT_DELETED": "Restaurant deleted successfully",
+  "READ_RESTAURANT_PROFILE": "Restaurant profile retrieved successfully",
+  "UPDATE_RESTAURANT_PROFILE": "Restaurant profile updated successfully",
+  "RESTAURANT_ASSIGN_TO_DOCTOR": "Restaurant assigned to doctor successfully",
 
 
   "MENU_ITEM_CREATED": "Menu item created successfully",
@@ -67,12 +66,35 @@
 "MENU_ITEM_UPDATE": "Menu item updated successfully",
 "MENU_ITEM_DELETED": "Menu item deleted successfully",
 
-  "REVIEW_CREATE": "Review created successfully",
-  "REVIEW_GET_PATIENT": "Patient reviews retrieved successfully",
-  "REVIEW_GET_DOCTOR": "Doctor reviews retrieved successfully",
-  "REVIEW_GET_ONE": "Review retrieved successfully",
-  "REVIEW_UPDATE": "Review updated successfully",
-  "REVIEW_DELETE": "Review deleted successfully"
+
+"CART_READ": "Cart fetched successfully",
+"CART_ITEM_ADDED": "Item added to cart successfully",
+"CART_ITEM_UPDATED": "Cart item updated successfully",
+"CART_ITEM_REMOVED": "Cart item removed successfully",
+"CART_CLEARED": "Cart cleared successfully",
+
+
+"ORDER_CREATED": "Order placed successfully",
+"ORDER_READ": "Orders fetched successfully",
+"ORDER_READ_ONE": "Order fetched successfully",
+"ORDER_UPDATE": "Order status updated successfully",
+"ORDER_CANCELLED": "Order cancelled successfully",
+
+  "REVIEW_CREATED": "Review submitted successfully",
+"REVIEW_READ": "Reviews fetched successfully",
+"REVIEW_RESPONSE_ADDED": "Response submitted successfully",
+
+"NOTIFICATION_READ": "Notifications fetched successfully",
+"NOTIFICATION_READ_ONE": "Notification marked as read",
+"NOTIFICATION_READ_ALL": "All notifications marked as read",
+"NOTIFICATION_BROADCAST_SENT": "Broadcast sent successfully",
+
+"AUDIT_LOG_READ": "Audit logs fetched successfully",
+
+"CHAT_REPLY_GENERATED": "Reply generated successfully",
+"CHAT_HISTORY_READ": "Chat history fetched successfully",
+
+"ADMIN_ANALYTICS_READ": "Analytics fetched successfully"
 
 
   

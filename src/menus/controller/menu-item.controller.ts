@@ -1,7 +1,8 @@
-import { Controller, Get, Param, Patch, Post, Delete, Body, UseGuards } from "@nestjs/common";
+import { Controller, Get, Param, Patch, Post, Delete, Body, Query, UseGuards } from "@nestjs/common";
 import { MenuItemService } from "../service/menu-item.service";
 import { CreateMenuItemDTO } from "../dto/create-menu-item.dto";
 import { UpdateMenuItemDTO } from "../dto/update-menu-item.dto";
+import { BulkCreateMenuItemsDTO } from "../dto/bulk-create-menu-items.dto";
 import { I18n, I18nContext } from "nestjs-i18n";
 import { Roles } from "../../common/decorators/role.decorator";
 import { RoleEnum } from "../../common/enums/role.enum";
@@ -10,8 +11,8 @@ import { Permissions } from "../../common/decorators/permission.decorator";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { RolesGuard } from "../../common/guards/role.guard";
-import { User } from "../../user/schemas/user.schema";
 import { CurrentUser } from "../../common/decorators/current-user.decorator";
+import { User } from "../../user/schemas/user.schema";
 
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -44,6 +45,34 @@ export class MenuItemController{
         return {data:response, message}
     }
 
+    @Post('bulk')
+    @Roles(RoleEnum.ADMIN, RoleEnum.RESTAURANT)
+    @Permissions(PermissionCode.MENU_ITEM_CREATE)
+    @ApiOperation({summary: 'bulk import dishes for a restaurant'})
+    @ApiResponse({status: 200, description:'menu items created successfully'})
+    async bulkCreate(
+        @Body() dto: BulkCreateMenuItemsDTO,
+        @CurrentUser() user: User,
+        @I18n() i18n: I18nContext
+    ){
+        const response = await this.menuItemService.bulkCreate(dto, user)
+        const message = i18n.t("common.MENU_ITEM_CREATED")
+        return {data:response, message}
+    }
+
+    @Get('search')
+    @Roles(RoleEnum.ADMIN, RoleEnum.RESTAURANT, RoleEnum.CUSTOMER)
+    @ApiOperation({summary: 'search dishes across all restaurants'})
+    @ApiResponse({status: 200, description:'menu items fetched successfully'})
+    async search(
+        @Query('q') q: string,
+        @I18n() i18n: I18nContext
+    ){
+        const response = await this.menuItemService.searchMenuItems(q)
+        const message = i18n.t("common.MENU_ITEM_READ")
+        return {data:response, message}
+    }
+
     @Get('me/menu-items')
     @Roles(RoleEnum.ADMIN, RoleEnum.RESTAURANT)
     @ApiOperation({summary:'fetch menu items for my own restaurant'})
@@ -57,21 +86,8 @@ export class MenuItemController{
         return {data:response, message}
     }
 
-    @Get()
-    @Roles(RoleEnum.ADMIN)
-    @Permissions(PermissionCode.MENU_ITEM_READ)
-    @ApiOperation({summary: 'fetch all menu items'})
-    @ApiResponse({status: 200, description:'menu items fetched successfully'})
-    async getAll(
-        @I18n() i18n: I18nContext
-    ){
-        const response = await this.menuItemService.getAllMenuItems()
-        const message = i18n.t("common.MENU_ITEM_READ")
-        return {data:response, message}
-    }
-
     @Get('restaurant/:restaurantId')
-    @Roles(RoleEnum.ADMIN, RoleEnum.RESTAURANT)
+    @Roles(RoleEnum.ADMIN, RoleEnum.RESTAURANT, RoleEnum.CUSTOMER)
     @ApiOperation({summary:'fetch all menu items for one restaurant'})
     @ApiResponse({status:200, description:'menu items fetched successfully'})
     async getByRestaurant(
@@ -83,8 +99,23 @@ export class MenuItemController{
         return {data:response, message}
     }
 
-    @Get(":id")
+    @Get()
     @Roles(RoleEnum.ADMIN)
+    @Permissions(PermissionCode.MENU_ITEM_READ)
+    @ApiOperation({summary: 'fetch all menu items, optionally filtered by restaurantId'})
+    @ApiResponse({status: 200, description:'menu items fetched successfully'})
+    async getAll(
+        @Query('restaurantId') restaurantId: string,
+        @I18n() i18n: I18nContext
+    ){
+        const response = await this.menuItemService.getAllMenuItems(restaurantId)
+        const message = i18n.t("common.MENU_ITEM_READ")
+        return {data:response, message}
+    }
+
+    @Get(":id")
+    @Roles(RoleEnum.ADMIN, RoleEnum.RESTAURANT, RoleEnum.CUSTOMER)
+    @Permissions(PermissionCode.MENU_ITEM_READ_ONE)
     @ApiOperation({summary:'fetch one menu item'})
     @ApiResponse({status:200, description:'menu item fetched successfully'})
     async getOne(
@@ -104,10 +135,9 @@ export class MenuItemController{
     async update(
         @Param('id') id:string,
         @I18n() i18n:I18nContext,
-        @Body() dto:UpdateMenuItemDTO,
-        @CurrentUser() user: User
+        @Body() dto:UpdateMenuItemDTO
     ){
-        const response = await this.menuItemService.updateMenuItem(id, dto, user)
+        const response = await this.menuItemService.updateMenuItem(id, dto)
         const message = i18n.t("common.MENU_ITEM_UPDATE")
         return {data:response, message}
     }

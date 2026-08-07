@@ -4,6 +4,7 @@ import { MenuItem } from "../schema/menu-item.schema";
 import { Model } from "mongoose";
 import { Restaurant } from "../../restaurant/schema/restaurant.schema";
 import { CreateMenuItemDTO } from "../dto/create-menu-item.dto";
+import { BulkCreateMenuItemsDTO } from "../dto/bulk-create-menu-items.dto";
 import { HttpStatus } from "@nestjs/common";
 import { Types } from "mongoose";
 import { User } from "../../user/schemas/user.schema";
@@ -68,8 +69,49 @@ export class MenuItemService{
         return menuItem;
     }
 
-    async getAllMenuItems():Promise<MenuItem[]>{
-        const menuItems = await this.menuItemModel.find().populate({path:'restaurant'})
+    async bulkCreate(dto: BulkCreateMenuItemsDTO, user: User): Promise<MenuItem[]>{
+        if(!dto.items || dto.items.length === 0){
+            throw new HttpException("items array is required", HttpStatus.BAD_REQUEST)
+        }
+
+        const restaurantId = await this.resolveRestaurantForUser(user, dto.restaurant)
+
+        const docs = dto.items.map(item => ({
+            name: item.name,
+            description: item.description,
+            category: item.category,
+            price: item.price,
+            photoUrl: item.photoUrl,
+            tags: item.tags,
+            isAvailable: item.isAvailable,
+            prepTimeMinutes: item.prepTimeMinutes,
+            restaurant: new Types.ObjectId(restaurantId)
+        }))
+
+        const menuItems = await this.menuItemModel.insertMany(docs)
+        return menuItems as unknown as MenuItem[];
+    }
+
+    async getAllMenuItems(restaurantId?: string):Promise<MenuItem[]>{
+        const filter: any = {}
+        if(restaurantId){
+            filter.restaurant = new Types.ObjectId(restaurantId)
+        }
+        const menuItems = await this.menuItemModel.find(filter).populate({path:'restaurant'})
+        return menuItems;
+    }
+
+    async searchMenuItems(query: string): Promise<MenuItem[]>{
+        if(!query){
+            throw new HttpException("search query 'q' is required", HttpStatus.BAD_REQUEST)
+        }
+        const menuItems = await this.menuItemModel.find({
+            $or: [
+                { name: { $regex: query, $options: 'i' } },
+                { description: { $regex: query, $options: 'i' } },
+                { tags: { $regex: query, $options: 'i' } },
+            ]
+        }).populate({path:'restaurant'})
         return menuItems;
     }
 
@@ -99,17 +141,10 @@ export class MenuItemService{
         return menuItem
     }
 
-    async updateMenuItem(id: string, dto: any, user: User): Promise<MenuItem> {
-      const existMenuItem = await this.menuItemModel.findById(id).populate({path:'restaurant'});
+    async updateMenuItem(id: string, dto: any): Promise<MenuItem> {
+      const existMenuItem = await this.menuItemModel.findById(id);
       if (!existMenuItem) {
         throw new HttpException('Menu item not found', HttpStatus.NOT_FOUND);
-      }
-
-      if(user.roles?.name !== RoleEnum.ADMIN){
-        const restaurant = existMenuItem.restaurant as unknown as Restaurant
-        if(restaurant.user?.toString() !== user._id.toString()){
-            throw new HttpException("You do not own this menu item", HttpStatus.FORBIDDEN)
-        }
       }
 
       const updateData: any = {};

@@ -15,7 +15,9 @@ import {AdminModule} from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
 import { RestaurantModule } from './restaurant/restaurant.module';
 import { MenuItemModule } from './menus/menu-item.module';
-
+import { CartModule } from './cart/cart.module';
+import { OrderModule } from './order/order.module';
+import { ReviewModule } from './review/review.module';
 
 
 @Module({
@@ -54,9 +56,12 @@ import { MenuItemModule } from './menus/menu-item.module';
     CustomerModule,
     RestaurantModule,
     AuthModule,
-    MenuItemModule,
-    MailModule,
     AdminModule,
+    MenuItemModule,
+    CartModule,
+    OrderModule,
+    ReviewModule,
+    MailModule,
 
   ],
   controllers: [AppController],

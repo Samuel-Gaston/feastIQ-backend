@@ -97,9 +97,10 @@ export class RestaurantController{
     async updateStatus(
         @Param('id') id:string,
         @Body() dto: UpdateRestaurantStatusDTO,
+        @CurrentUser() user: User,
         @I18n() i18n:I18nContext
     ){
-        const response = await this.restaurantService.updateRestaurantStatus(id, dto.status!)
+        const response = await this.restaurantService.updateRestaurantStatus(id, dto.status!, user._id.toString())
         const message = i18n.t("common.RESTAURANT_UPDATE")
         return {data:response, message}
     }

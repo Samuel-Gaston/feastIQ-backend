@@ -6,7 +6,8 @@ import { MailModule } from "../common/mail/mail.module";
 import { Restaurant, RestaurantSchema } from "./schema/restaurant.schema";
 import { RestaurantService } from "./service/restaurant.service";
 import { RestaurantController } from "./controller/restaurant.controller";
-
+import { NotificationModule } from "../notification/notification.module";
+import { AuditLogModule } from "../audit-log/audit-log.module";
 
 @Module({
     imports:[
@@ -15,7 +16,9 @@ import { RestaurantController } from "./controller/restaurant.controller";
         {name: Role.name, schema:RoleSchema},
         {name: User.name, schema:UserSchema},
        ]) ,
-  MailModule],
+  MailModule,
+  NotificationModule,
+  AuditLogModule],
     providers:[RestaurantService],
     controllers:[RestaurantController],
     exports:[RestaurantService]
