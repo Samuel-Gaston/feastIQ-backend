@@ -18,7 +18,9 @@ import { MenuItemModule } from './menus/menu-item.module';
 import { CartModule } from './cart/cart.module';
 import { OrderModule } from './order/order.module';
 import { ReviewModule } from './review/review.module';
-
+import { AuditLogModule } from './audit-log/audit-log.module';
+import { ChatModule } from './chat/chat.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -61,7 +63,10 @@ import { ReviewModule } from './review/review.module';
     CartModule,
     OrderModule,
     ReviewModule,
+    ChatModule,
     MailModule,
+    NotificationModule,
+    AuditLogModule,
 
   ],
   controllers: [AppController],
