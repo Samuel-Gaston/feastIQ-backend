@@ -91,7 +91,9 @@
 "CHAT_REPLY_GENERATED": "Réponse générée avec succès",
 "CHAT_HISTORY_READ": "Historique de discussion récupéré avec succès",
 
-"ADMIN_ANALYTICS_READ": "Statistiques récupérées avec succès"
+"ADMIN_ANALYTICS_READ": "Statistiques récupérées avec succès",
+
+"RECOMMENDATION_READ": "Recommandations récupérées avec succès"
 
 
 

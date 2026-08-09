@@ -10,16 +10,18 @@ import { Types } from "mongoose";
 import { User } from "../../user/schemas/user.schema";
 import { RoleEnum } from "../../common/enums/role.enum";
 import { RestaurantStatusEnum } from "../../common/enums/restaurant.status";
-
+import { AiGatewayService } from "../../ai-gateway/service/ai-gateway.service";
 
 @Injectable()
 export class MenuItemService{
-    constructor(
+  constructor(
         @InjectModel(MenuItem.name)
         private readonly menuItemModel: Model<MenuItem>,
 
         @InjectModel(Restaurant.name)
         private readonly restaurantModel: Model<Restaurant>,
+
+        private readonly aiGatewayService: AiGatewayService
     ){}
 
 
@@ -48,7 +50,7 @@ export class MenuItemService{
         return restaurant._id.toString()
     }
 
-    async create(dto: CreateMenuItemDTO, user: User): Promise<MenuItem>{
+  async create(dto: CreateMenuItemDTO, user: User): Promise<MenuItem>{
         const {name, description, category, price, photoUrl, tags, isAvailable, prepTimeMinutes, restaurant} = dto;
 
         const restaurantId = await this.resolveRestaurantForUser(user, restaurant)
@@ -64,6 +66,17 @@ export class MenuItemService{
             prepTimeMinutes,
             restaurant: new Types.ObjectId(restaurantId)
         })
+
+        if(photoUrl){
+            const aiResult = await this.aiGatewayService.classifyFoodByUrl(photoUrl)
+            if(aiResult && aiResult.predictedCategory){
+                menuItem.aiTag = {
+                    predictedCategory: aiResult.predictedCategory,
+                    confidence: aiResult.confidence
+                }
+                await menuItem.save()
+            }
+        }
 
         await menuItem.populate({path: 'restaurant'})
         return menuItem;

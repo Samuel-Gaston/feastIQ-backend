@@ -21,6 +21,9 @@ import { ReviewModule } from './review/review.module';
 import { AuditLogModule } from './audit-log/audit-log.module';
 import { ChatModule } from './chat/chat.module';
 import { NotificationModule } from './notification/notification.module';
+import { SeedModule } from './database/seed.module';
+import { AiGatewayModule } from './ai-gateway/ai-gateway.module';
+import { RecommendationModule } from './recommendation/recommendation.module';
 
 @Module({
   imports: [
@@ -67,6 +70,9 @@ import { NotificationModule } from './notification/notification.module';
     MailModule,
     NotificationModule,
     AuditLogModule,
+    SeedModule,
+    RecommendationModule,
+    AiGatewayModule
 
   ],
   controllers: [AppController],

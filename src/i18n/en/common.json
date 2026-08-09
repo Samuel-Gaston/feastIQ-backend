@@ -94,7 +94,9 @@
 "CHAT_REPLY_GENERATED": "Reply generated successfully",
 "CHAT_HISTORY_READ": "Chat history fetched successfully",
 
-"ADMIN_ANALYTICS_READ": "Analytics fetched successfully"
+"ADMIN_ANALYTICS_READ": "Analytics fetched successfully",
+
+"RECOMMENDATION_READ": "Recommendations fetched successfully"
 
 
   
