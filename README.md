@@ -21,7 +21,7 @@ Handles authentication, restaurants, menus, cart, orders, reviews, notifications
 
 ## About This Repository
 
-This is the **backend API** for [FeastIQ](#) — an AI-powered, multi-restaurant food ordering marketplace. It's built with NestJS for its modularity, built-in dependency injection, decorator-driven validation, and auto-generated Swagger documentation — well suited to a system with three distinct user roles (Customer, Restaurant Owner, Admin) and strict role-based data isolation.
+This is the **backend API** for [FeastIQ] — an AI-powered, multi-restaurant food ordering marketplace. It's built with NestJS for its modularity, built-in dependency injection, decorator-driven validation, and auto-generated Swagger documentation — well suited to a system with three distinct user roles (Customer, Restaurant Owner, Admin) and strict role-based data isolation.
 
 This service owns all core business logic. AI/ML capabilities (recommendations and food image classification) are handled by a **separate Python/FastAPI microservice**, reached only through this API's `AI Gateway` module. The conversational ordering assistant is a distinct feature — a direct Groq API integration built into this backend's own `chat` module, not part of the Python service.
 
@@ -34,7 +34,7 @@ This service owns all core business logic. AI/ML capabilities (recommendations a
 - **Cart & Checkout** — restaurant-scoped cart, Cash-on-Delivery checkout
 - **Orders** — full status lifecycle (`placed → confirmed → preparing → ready_for_pickup → out_for_delivery → delivered`), notification hooks on every transition
 - **Reviews** — post-delivery ratings with restaurant owner responses
-- **Notifications** — push (FCM), email, and in-app notification centre, plus admin broadcast messaging
+- **Notifications** — In-app notification centre, plus admin broadcast messaging
 - **Admin** — user management, role/permission assignment, restaurant approvals, platform analytics, audit logging
 - **AI Gateway** — the only module that talks to the FastAPI AI service (`/recommend`, `/classify-food`), with graceful fallback if that service is unavailable
 - **Chat Assistant** — direct Groq API integration for general platform support/FAQ, with tool calls scoped to the logged-in customer's own orders
@@ -51,9 +51,7 @@ This service owns all core business logic. AI/ML capabilities (recommendations a
 | i18n | nestjs-i18n (English/French) |
 | Docs | Swagger / OpenAPI (auto-generated) |
 | Media | Cloudinary |
-| Notifications | Firebase Cloud Messaging, Nodemailer |
 | LLM | Groq API (direct integration, chat module) |
-| Testing | Jest |
 | CI/CD | GitHub Actions |
 
 ---
@@ -104,10 +102,7 @@ Interactive Swagger documentation is auto-generated from decorators once the ser
 
 **Samuel Gaston** — Software Engineer
 
----
 
-## License
 
-This project is licensed under the MIT License.
 
 </div>
