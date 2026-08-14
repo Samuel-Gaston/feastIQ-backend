@@ -7,12 +7,12 @@ export class MailService {
   private readonly logger = new Logger(MailService.name);
   private transporter: nodemailer.Transporter;
 
-  constructor(private configService: ConfigService) {
+   constructor(private configService: ConfigService) {
   this.transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'gastonetoke@gmail.com',
-        pass: 'ekjffvztcdmwfubv',
+        user: this.configService.get<string>('MAIL_USER'),
+        pass: this.configService.get<string>('MAIL_PASS'),
       },
     });
   }
