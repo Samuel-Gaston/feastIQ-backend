@@ -21,8 +21,6 @@ export class Notification extends Document{
     @Prop({default: false})
     isRead?:boolean;
 
-    @Prop()
-    deepLink?:string;
 
 }
 

@@ -29,7 +29,6 @@ export class NotificationService{
             title,
             body,
             type: type ?? NotificationTypeEnum.SYSTEM,
-            deepLink,
             isRead: false
         })
         return notification
@@ -87,7 +86,6 @@ export class NotificationService{
             title: dto.title,
             body: dto.body,
             type: dto.type ?? NotificationTypeEnum.PROMO,
-            deepLink: dto.deepLink,
             isRead: false
         }))
 

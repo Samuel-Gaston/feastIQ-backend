@@ -12,8 +12,6 @@ export class BroadcastNotificationDTO{
     @ApiPropertyOptional({description:'enter the notification type', enum: NotificationTypeEnum})
     type?:NotificationTypeEnum;
 
-    @ApiPropertyOptional({description:'enter the deep link'})
-    deepLink?:string;
 
     @ApiPropertyOptional({description:'target role, leave empty to broadcast to everyone', enum: RoleEnum})
     targetRole?:RoleEnum;
