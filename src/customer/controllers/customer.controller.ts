@@ -12,6 +12,7 @@ import { CurrentUser } from "../../common/decorators/current-user.decorator";
 import { User } from "../../user/schemas/user.schema";
 import { JwtAuthGuard } from "../../common/guards/jwt-auth.guard";
 import { RolesGuard } from "../../common/guards/role.guard";
+import { SetCustomerStatusDTO } from "../dtos/set-customer-status.dto";
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('Customers')
@@ -113,6 +114,22 @@ export class CustomerController{
     const message = i18n.t("common.CUSTOMER_UPDATE")
     return {data:response, message}
    }
+
+
+   @Patch(':id/status')
+@Roles(RoleEnum.ADMIN)
+@Permissions(PermissionCode.CUSTOMER_UPDATE)
+@ApiOperation({summary:"suspend or activate a CUSTOMER"})
+@ApiResponse({status:200, description:"CUSTOMER status updated successfully"})
+async setStatus(
+ @Param('id') id:string,
+ @Body() dto:SetCustomerStatusDTO,
+ @I18n() i18n:I18nContext
+){
+ const response = await this.customerService.setCustomerStatus(id, dto.isActive)
+ const message = i18n.t("common.CUSTOMER_UPDATE")
+ return {data:response, message}
+}
 
    @Delete(':id')
    @Roles(RoleEnum.ADMIN)

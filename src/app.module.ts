@@ -48,7 +48,7 @@ import { RecommendationModule } from './recommendation/recommendation.module';
       useFactory: (configService: ConfigService) => mailConfig(configService),
     }),
 
-    // MongoDB connection
+   
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({

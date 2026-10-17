@@ -14,6 +14,7 @@ import { LoginDto } from '../dtos/login.dto';
 import { ForgotPasswordDto, ResetPasswordDto } from '../dtos/reset-password.dto';
 import { Logger } from '@nestjs/common';
 import { JwtSignOptions } from '@nestjs/jwt';
+import { createHash } from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -27,17 +28,33 @@ export class AuthService {
     private readonly mailService: MailService,
   ) {}
 
-  private generateAccessToken(user: User & { _id: Types.ObjectId }, roleName?: string): string {
+private generateAccessToken(user: User & { _id: Types.ObjectId }, roleName: string): string {
   const payload = {
     sub: user._id.toString(),
     email: user.email ?? '',
-    role: roleName ?? 'customer',
+    role: roleName,
   };
-
- return this.jwtService.sign(payload, {
+  return this.jwtService.sign(payload, {
     secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
     expiresIn: '15m',
   });
+}
+
+private hashToken(token: string): string {
+  return createHash('sha256').update(token).digest('hex');
+}
+
+private async resolveRoleName(user: any): Promise<string> {
+  let roleName: string | undefined = user.roles?.name;
+  if (!roleName) {
+    const roleId = user.roles?._id ?? user.roles;
+    const role = roleId ? await this.roleModel.findById(roleId).lean() : null;
+    roleName = (role as any)?.name;
+  }
+  if (!roleName) {
+    throw new UnauthorizedException('No role is assigned to this account');
+  }
+  return roleName;
 }
 
 
@@ -165,11 +182,11 @@ async login(dto: LoginDto) {
     throw new UnauthorizedException('Invalid email or password');
   }
 
-  const roleName = (user.roles as any)?.name;
+ const roleName = await this.resolveRoleName(user);
   const accessToken = this.generateAccessToken(user as any, roleName);
   const refreshToken = this.generateRefreshToken(user as any);
-
-  const refreshTokenHash = await bcrypt.hash(refreshToken, 10);
+  
+const refreshTokenHash = this.hashToken(refreshToken);
   await this.userModel.findByIdAndUpdate(user._id, { refreshTokenHash });
 
   return {
@@ -187,44 +204,40 @@ async login(dto: LoginDto) {
 }
 
  
-  async refreshToken(token: string) {
-    if (!token) {
-      throw new BadRequestException('Refresh token is required');
-    }
-
-    let payload: any;
-    try {
-      payload = this.jwtService.verify(token, {
-        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-      });
-    } catch (e) {
-      throw new UnauthorizedException('Invalid or expired refresh token');
-    }
-
-    const user = await this.userModel.findById(payload.sub).populate('roles');
-    if (!user) {
-      throw new UnauthorizedException('User not found');
-    }
-
-    if (!user.refreshTokenHash) {
-      throw new UnauthorizedException('Session has been revoked. Please log in again.');
-    }
-
-    const isTokenValid = await bcrypt.compare(token, user.refreshTokenHash);
-    if (!isTokenValid) {
-      throw new UnauthorizedException('Session has been revoked. Please log in again.');
-    }
-
-    const roleName = (user.roles as any)?.name;
-
-    const accessToken = this.generateAccessToken(user as any, roleName);
-    const newRefreshToken = this.generateRefreshToken(user as any);
-
-    const refreshTokenHash = await bcrypt.hash(newRefreshToken, 10);
-    await this.userModel.findByIdAndUpdate(user._id, { refreshTokenHash });
-
-    return { accessToken, refreshToken: newRefreshToken };
+async refreshToken(token: string) {
+  if (!token) {
+    throw new BadRequestException('Refresh token is required');
   }
+
+  let payload: any;
+  try {
+    payload = this.jwtService.verify(token, {
+      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+    });
+  } catch (e) {
+    throw new UnauthorizedException('Invalid or expired refresh token');
+  }
+
+  const user = await this.userModel.findById(payload.sub).populate('roles');
+  if (!user) {
+    throw new UnauthorizedException('User not found');
+  }
+
+  if (!user.refreshTokenHash || this.hashToken(token) !== user.refreshTokenHash) {
+    throw new UnauthorizedException('Session has been revoked. Please log in again.');
+  }
+
+  const roleName = await this.resolveRoleName(user);
+
+  const accessToken = this.generateAccessToken(user as any, roleName);
+  const newRefreshToken = this.generateRefreshToken(user as any);
+
+  await this.userModel.findByIdAndUpdate(user._id, {
+    refreshTokenHash: this.hashToken(newRefreshToken),
+  });
+
+  return { accessToken, refreshToken: newRefreshToken };
+}
 
   async logout(userId: string) {
     const user = await this.userModel.findById(userId);

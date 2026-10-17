@@ -10,6 +10,7 @@ import * as bcrypt from 'bcryptjs'
 import { MailService } from "../../common/mail/mail.service";
 import {Types} from "mongoose"
 
+
 @Injectable()
 export class CustomerService{
     constructor(
@@ -192,6 +193,26 @@ async updateCustomerProfile(id: string, dto: any): Promise<Customer> {
   return Customer.toObject() as Customer;
 }
  
+async setCustomerStatus(id: string, isActive: boolean): Promise<Customer> {
+  const customer = await this.customerModel.findById(id);
+  if (!customer) {
+    throw new HttpException('Customer not found', HttpStatus.NOT_FOUND);
+  }
+  if (!customer.user) {
+    throw new HttpException('This customer has no linked user account', HttpStatus.BAD_REQUEST);
+  }
+
+  const update = isActive
+    ? { $set: { isActive } }
+    : { $set: { isActive }, $unset: { refreshTokenHash: 1 } };
+
+  const user = await this.userModel.findByIdAndUpdate(customer.user.toString(), update);
+  if (!user) {
+    throw new HttpException('Linked user not found', HttpStatus.NOT_FOUND);
+  }
+
+  return this.getCustomerById(id);
+}
 
   
 

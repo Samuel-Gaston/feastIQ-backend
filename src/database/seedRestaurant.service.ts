@@ -10,6 +10,7 @@ import { MenuItemCategoryEnum } from "../common/enums/menu-item-category.enum";
 import { RestaurantStatusEnum } from "../common/enums/restaurant.status";
 import { RoleEnum } from "../common/enums/role.enum";
 
+
 const restaurantNames = [
     {name: "Chez Maman Douala", cuisineTags: ["Local", "Grill"]},
     {name: "Le Petit Paris", cuisineTags: ["Continental", "French"]},

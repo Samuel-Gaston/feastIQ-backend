@@ -53,6 +53,7 @@ export class Order extends Document{
     @Prop({type: [OrderItemSchema], default: []})
     items?:OrderItem[];
 
+    
     @Prop()
     deliveryAddress?:string;
 
